@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.recp.service.goods.mapper.GoodsCategoryMapper">
+    <resultMap id="BaseResultMap" type="com.smart.recp.service.goods.entity.GoodsCategory">
+        <!--@mbg.generated-->
+        <!--@Table recp_goods_category-->
+        <id column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="image" jdbcType="VARCHAR" property="image"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+        <result column="description" jdbcType="LONGVARCHAR" property="description"/>
+        <result column="creator" jdbcType="INTEGER" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_by" jdbcType="INTEGER" property="modifiedBy"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
+
+    <resultMap id="Level2ResultMap" type="com.smart.recp.service.goods.entity.GoodsCategory" >
+        <id column="category_id_2" jdbcType="INTEGER" property="categoryId"/>
+        <result column="parent_id_2" jdbcType="INTEGER" property="parentId"/>
+        <result column="category_name_2" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="level_2" jdbcType="INTEGER" property="level"/>
+        <result column="icon_2" jdbcType="VARCHAR" property="icon"/>
+        <result column="image_2" jdbcType="VARCHAR" property="image"/>
+        <result column="status_2" jdbcType="INTEGER" property="status"/>
+        <result column="sort_2" jdbcType="INTEGER" property="sort"/>
+        <result column="description_2" jdbcType="LONGVARCHAR" property="description"/>
+        <result column="creator_2" jdbcType="INTEGER" property="creator"/>
+        <result column="create_time_2" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_by_2" jdbcType="INTEGER" property="modifiedBy"/>
+        <result column="modified_time_2" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
+
+    <resultMap id="CascadeResultMap" type="com.smart.recp.service.goods.entity.GoodsCategory" extends="BaseResultMap">
+        <collection property="children" resultMap="Level2ResultMap"/>
+    </resultMap>
+
+
+
+
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        category_id, parent_id, category_name, `level`, icon, image, `status`, sort, description,
+        creator, create_time, modified_by, modified_time
+    </sql>
+
+    <select id="getCategoryCascadeByLevel" resultMap="CascadeResultMap">
+        select c1.category_id,
+               c1.parent_id,
+               c1.category_name,
+               c1.level,
+               c1.icon,
+               c1.image,
+               c1.status,
+               c1.sort,
+               c1.description,
+               c1.creator,
+               c1.create_time,
+               c1.modified_by,
+               c1.modified_time,
+               c2.category_id category_id_2,
+               c2.parent_id parent_id_2,
+               c2.category_name category_name_2,
+               c2.level level_2,
+               c2.icon icon_2,
+               c2.image image_2,
+               c2.status status_2,
+               c2.sort sort_2,
+               c2.description description_2,
+               c2.creator creator_2,
+               c2.create_time create_time_2,
+               c2.modified_by modified_by_2,
+               c2.modified_time modified_time_2
+        from recp_goods_category c1
+                     left join recp_goods_category c2 on c1.category_id = c2.parent_id
+        where c1.level = #{level}
+    </select>
+</mapper>

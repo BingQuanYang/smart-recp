@@ -1,0 +1,23 @@
+oss:
+  endpoint: oss-cn-hangzhou.aliyuncs.com
+  access-keyId: LTAI4GDqssJNwiy1t77yEGXF
+  accessKeySecret: FecNDuSU88nBeEc7cCtYnFV0WbJDTd
+  bucketName: com-smart-recp
+
+sms:
+  endpoint: dysmsapi.aliyuncs.com
+  accessKeyId: LTAI4GDqssJNwiy1t77yEGXF
+  accessKeySecret: FecNDuSU88nBeEc7cCtYnFV0WbJDTd
+  signName: ZZH商场
+  templateCode: SMS_206552344
+
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 47.107.114.69:8848
+  redis:
+    database: 1
+    host: 47.107.114.69
+    port: 6379

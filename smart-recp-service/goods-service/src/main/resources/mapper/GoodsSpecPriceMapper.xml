@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.recp.service.goods.mapper.GoodsSpecPriceMapper">
+    <resultMap id="BaseResultMap" type="com.smart.recp.service.goods.entity.GoodsSpecPrice">
+        <!--@mbg.generated-->
+        <!--@Table recp_goods_spec_price-->
+        <id column="price_id" jdbcType="INTEGER" property="priceId"/>
+        <result column="spec_id" jdbcType="INTEGER" property="specId"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="min" jdbcType="INTEGER" property="min"/>
+        <result column="max" jdbcType="INTEGER" property="max"/>
+    </resultMap>
+
+    <resultMap id="CascadeResultMap" type="com.smart.recp.service.goods.entity.GoodsSpecPrice" extends="BaseResultMap">
+        <result column="type_gsp" jdbcType="INTEGER" property="type"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        price_id, spec_id, price, `type`, `min`, `max`
+    </sql>
+</mapper>

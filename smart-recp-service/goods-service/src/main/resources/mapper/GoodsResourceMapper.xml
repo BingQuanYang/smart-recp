@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.recp.service.goods.mapper.GoodsResourceMapper">
+    <resultMap id="BaseResultMap" type="com.smart.recp.service.goods.entity.GoodsResource">
+        <!--@mbg.generated-->
+        <!--@Table recp_goods_resource-->
+        <id column="resource_id" jdbcType="INTEGER" property="resourceId"/>
+        <result column="goods_id" jdbcType="INTEGER" property="goodsId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="link" jdbcType="VARCHAR" property="link"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+        <result column="is_master" jdbcType="INTEGER" property="isMaster"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        resource_id, goods_id, `type`, link, sort, is_master
+    </sql>
+
+    <select id="getResourceByGoodsIdListAndIsMaster" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from recp_goods_resource where is_master = ${isMaster}
+                                   and goods_id in
+        <foreach collection="goodsIdList" open="(" close=")" separator="," item="goodsId">
+            #{goodsId}
+        </foreach>
+    </select>
+</mapper>

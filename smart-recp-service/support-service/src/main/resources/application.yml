@@ -1,0 +1,11 @@
+server:
+  port: 9001
+
+spring:
+  application:
+    name: support-service
+  profiles:
+    include: dev
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher

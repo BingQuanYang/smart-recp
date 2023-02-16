@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.recp.service.goods.mapper.GoodsMapper">
+    <resultMap id="BaseResultMap" type="com.smart.recp.service.goods.entity.Goods">
+        <!--@mbg.generated-->
+        <!--@Table recp_goods-->
+        <id column="goods_id" jdbcType="INTEGER" property="goodsId"/>
+        <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="seller_id" jdbcType="INTEGER" property="sellerId"/>
+        <result column="goods_name" jdbcType="VARCHAR" property="goodsName"/>
+        <result column="sub_title" jdbcType="VARCHAR" property="subTitle"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="tags" jdbcType="VARCHAR" property="tags"/>
+        <result column="detail" jdbcType="LONGVARCHAR" property="detail"/>
+        <result column="sale_total" jdbcType="INTEGER" property="saleTotal"/>
+        <result column="generated_address" jdbcType="VARCHAR" property="generatedAddress"/>
+        <result column="goods_unit" jdbcType="VARCHAR" property="goodsUnit"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="new_status" jdbcType="INTEGER" property="newStatus"/>
+        <result column="recommend_status" jdbcType="INTEGER" property="recommendStatus"/>
+        <result column="creator" jdbcType="INTEGER" property="creator"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_by" jdbcType="INTEGER" property="modifiedBy"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
+    </resultMap>
+    <resultMap id="CascadeResultMap" type="com.smart.recp.service.goods.entity.Goods" extends="BaseResultMap">
+        <collection property="goodsResourceList"
+                    resultMap="com.smart.recp.service.goods.mapper.GoodsResourceMapper.BaseResultMap"/>
+        <collection property="goodsSpecList"
+                    resultMap="com.smart.recp.service.goods.mapper.GoodsSpecMapper.CascadeResultMap"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        goods_id, category_id, category_name, seller_id, goods_name, sub_title, description,
+        tags, detail, sale_total, generated_address, goods_unit, `status`, new_status, recommend_status,
+        creator, create_time, modified_by, modified_time, is_delete
+    </sql>
+
+    <select id="selectGoodsList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from recp_goods
+        <trim prefix="where" prefixOverrides="and | or">
+            is_delete = 0
+            <if test="goodsDTO.sellerId != null">
+                and seller_id = #{goodsDTO.sellerId}
+            </if>
+            <if test="goodsDTO.status != null">
+                and status = #{goodsDTO.status}
+            </if>
+        </trim>
+    </select>
+
+    <select id="getCascadeByGoodsId" resultMap="CascadeResultMap">
+        select g.goods_id,
+               g.category_id,
+               g.category_name,
+               g.seller_id,
+               g.goods_name,
+               g.sub_title,
+               g.description,
+               g.tags,
+               g.detail,
+               g.sale_total,
+               g.generated_address,
+               g.goods_unit,
+               g.status,
+               g.new_status,
+               g.recommend_status,
+               g.creator,
+               g.create_time,
+               g.modified_by,
+               g.modified_time,
+               g.is_delete,
+               gr.resource_id,
+               gr.goods_id,
+               gr.type,
+               gr.link,
+               gr.sort,
+               gr.is_master,
+               gs.spec_id,
+               gs.goods_id,
+               gs.spec_name,
+               gs.image,
+               gs.stock,
+               gs.sale,
+               gs.weight,
+               gs.status status_gs,
+               gsp.price_id,
+               gsp.spec_id,
+               gsp.price,
+               gsp.type type_gsp,
+               gsp.min,
+               gsp.max
+        from recp_goods g
+                     left join recp_goods_resource gr on g.goods_id = gr.goods_id
+                     left join recp_goods_spec gs on g.goods_id = gs.goods_id
+                     left join recp_goods_spec_price gsp on gs.spec_id = gsp.spec_id
+
+        where g.goods_id = #{goodsId}
+    </select>
+
+    <update id="deleteByGoodsIdList">
+        update recp_goods
+        set is_delete=1
+                where goods_id in
+        <foreach collection="goodsIdList" open="(" close=")" separator="," item="goodsId">
+            #{goodsId}
+        </foreach>
+    </update>
+</mapper>

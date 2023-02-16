@@ -1,0 +1,27 @@
+server:
+  port: 7001
+
+spring:
+  application:
+    name: gateway-service
+  profiles:
+    include: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${registry-center.host}:${registry-center.port}
+    gateway:
+      routes:
+        - id: goods-service
+          uri: lb://goods-service
+          predicates:
+            - Path=/api/goods/**
+          filters:
+            - StripPrefix=1
+        - id: support-service
+          uri: lb://support-service
+          predicates:
+            - Path=/api/support/**
+          filters:
+            - StripPrefix=1
+        #            - AddResponseHeader=X-Response-Default-Foo, Default-Bar
