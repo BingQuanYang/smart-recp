@@ -157,6 +157,11 @@
                 <version>${recp.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.smart.recp</groupId>
+                <artifactId>user-service-api</artifactId>
+                <version>${recp.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
                 <version>${springfox-swagger2.version}</version>

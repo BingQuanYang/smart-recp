@@ -17,6 +17,7 @@
     <modules>
         <module>support-service</module>
         <module>goods-service</module>
+        <module>user-service</module>
     </modules>
 
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.recp.service.user.mapper.BuyerMapper">
+  <resultMap id="BaseResultMap" type="com.smart.recp.service.user.entity.Buyer">
+    <!--@mbg.generated-->
+    <!--@Table recp_buyer-->
+    <id column="buyer_id" jdbcType="INTEGER" property="buyerId" />
+    <result column="buyer_account" jdbcType="VARCHAR" property="buyerAccount" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="introduction" jdbcType="VARCHAR" property="introduction" />
+    <result column="birthday" jdbcType="VARCHAR" property="birthday" />
+    <result column="head_portrait" jdbcType="VARCHAR" property="headPortrait" />
+    <result column="buyer_status" jdbcType="INTEGER" property="buyerStatus" />
+    <result column="balance_money" jdbcType="DECIMAL" property="balanceMoney" />
+    <result column="buyer_level" jdbcType="INTEGER" property="buyerLevel" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_by" jdbcType="INTEGER" property="modifiedBy" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    buyer_id, buyer_account, nickname, email, gender, introduction, birthday, head_portrait, 
+    buyer_status, balance_money, buyer_level, create_time, modified_by, modified_time, 
+    is_delete
+  </sql>
+</mapper>
