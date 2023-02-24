@@ -1,0 +1,21 @@
+server:
+  port: 8001
+
+spring:
+  application:
+    name: auth-service
+  profiles:
+    include: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${registry-center.host}:${registry-center.port}
+  datasource:
+    druid:
+      url: jdbc:mysql://${db-mysql.host}:${db-mysql.port}/smart-recp?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+      username: ${db-mysql.username}
+      password: ${db-mysql.password}
+  redis:
+    database: ${db-redis.database}
+    host: ${db-redis.host}
+    port: ${db-redis.port}
