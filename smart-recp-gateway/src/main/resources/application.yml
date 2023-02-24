@@ -6,6 +6,17 @@ spring:
     name: gateway-service
   profiles:
     include: dev
+
+  redis:
+    database: ${db-redis.database}
+    host: ${db-redis.host}
+    port: ${db-redis.port}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # 获取JWT验签公钥请求路径
+          jwk-set-uri: ${jwt-public-key-url}
   cloud:
     nacos:
       discovery:
@@ -24,4 +35,20 @@ spring:
             - Path=/api/support/**
           filters:
             - StripPrefix=1
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/oauth/**,/getPublicKey
+          filters:
+            - StripPrefix=0
         #            - AddResponseHeader=X-Response-Default-Foo, Default-Bar
+  #TODO
+  #BUG
+  main:
+    allow-bean-definition-overriding: true

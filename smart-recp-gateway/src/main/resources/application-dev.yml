@@ -1,3 +1,16 @@
 registry-center:
   host: 47.107.114.69
   port: 8848
+
+db-redis:
+  database: 1
+  host: 47.107.114.69
+  port: 6379
+
+jwt-public-key-url: http://localhost:8001/getPublicKey
+
+
+whitelist:
+  urls:
+    - /api/test
+    - /oauth/token
