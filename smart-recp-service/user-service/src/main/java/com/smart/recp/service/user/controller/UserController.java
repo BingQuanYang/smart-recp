@@ -49,7 +49,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/modify")
+    @PutMapping("/modify")
     @ApiOperation("修改用户信息")
     public RestResult<Boolean> update(@RequestBody UserDTO userDTO) throws BaseException {
         return RestResult.success(userService.update(userDTO));
