@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.recp.service.order.mapper.OrderItemMapper">
+  <resultMap id="BaseResultMap" type="com.smart.recp.service.order.entity.OrderItem">
+    <!--@mbg.generated-->
+    <!--@Table recp_order_item-->
+    <id column="order_item_id" jdbcType="INTEGER" property="orderItemId" />
+    <result column="buyer_id" jdbcType="INTEGER" property="buyerId" />
+    <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="order_item_number" jdbcType="VARCHAR" property="orderItemNumber" />
+    <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+    <result column="delivery_status" jdbcType="INTEGER" property="deliveryStatus" />
+    <result column="customer_status" jdbcType="INTEGER" property="customerStatus" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="spec_id" jdbcType="INTEGER" property="specId" />
+    <result column="price_id" jdbcType="INTEGER" property="priceId" />
+    <result column="goods_amount" jdbcType="INTEGER" property="goodsAmount" />
+    <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
+    <result column="goods_image" jdbcType="VARCHAR" property="goodsImage" />
+    <result column="spec_name" jdbcType="VARCHAR" property="specName" />
+    <result column="goods_price" jdbcType="DECIMAL" property="goodsPrice" />
+    <result column="total_money" jdbcType="DECIMAL" property="totalMoney" />
+    <result column="delivery_money" jdbcType="DECIMAL" property="deliveryMoney" />
+    <result column="receive_name" jdbcType="VARCHAR" property="receiveName" />
+    <result column="receive_mobile" jdbcType="VARCHAR" property="receiveMobile" />
+    <result column="receive_address" jdbcType="VARCHAR" property="receiveAddress" />
+    <result column="logistics_platform" jdbcType="INTEGER" property="logisticsPlatform" />
+    <result column="logistics_number" jdbcType="VARCHAR" property="logisticsNumber" />
+    <result column="seller_finish_time" jdbcType="TIMESTAMP" property="sellerFinishTime" />
+    <result column="delivery_finish_time" jdbcType="TIMESTAMP" property="deliveryFinishTime" />
+    <result column="delivery_receive_time" jdbcType="TIMESTAMP" property="deliveryReceiveTime" />
+    <result column="customer_finish_time" jdbcType="TIMESTAMP" property="customerFinishTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_by" jdbcType="INTEGER" property="modifiedBy" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    order_item_id, buyer_id, seller_id, order_id, order_number, order_item_number, order_status, 
+    delivery_status, customer_status, goods_id, spec_id, price_id, goods_amount, goods_name, 
+    goods_image, spec_name, goods_price, total_money, delivery_money, receive_name, receive_mobile, 
+    receive_address, logistics_platform, logistics_number, seller_finish_time, delivery_finish_time, 
+    delivery_receive_time, customer_finish_time, create_time, modified_by, modified_time, 
+    is_delete
+  </sql>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smart.recp.service.order.mapper.OrderCartMapper">
+  <resultMap id="BaseResultMap" type="com.smart.recp.service.order.entity.OrderCart">
+    <!--@mbg.generated-->
+    <!--@Table recp_order_cart-->
+    <id column="cart_id" jdbcType="INTEGER" property="cartId" />
+    <result column="buyer_id" jdbcType="INTEGER" property="buyerId" />
+    <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="spec_id" jdbcType="INTEGER" property="specId" />
+    <result column="price_id" jdbcType="INTEGER" property="priceId" />
+    <result column="goods_amount" jdbcType="INTEGER" property="goodsAmount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_by" jdbcType="INTEGER" property="modifiedBy" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    cart_id, buyer_id, seller_id, goods_id, spec_id, price_id, goods_amount, create_time, 
+    modified_by, modified_time
+  </sql>
+</mapper>
