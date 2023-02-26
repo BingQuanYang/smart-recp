@@ -182,3 +182,139 @@ create table recp_buyer
 ) comment '买家表';
 ```
 
+
+
+## 客户关注表
+
+```sql
+create table recp_customer_follow
+(
+    follow_id       int      not null primary key auto_increment comment 'ID',
+    seller_id       int      not null comment '卖家ID',
+    buyer_id        int      not null comment '买家ID',
+    customer_mobile varchar(32) comment '客户手机号',
+    vip_status      int               default 0 comment '会员状态：0->不是会员,1->会员',
+    vip_create_time datetime comment '加入会员时间',
+    buy_count       int      not null default 0 comment '购买次数',
+    total_buy_money decimal(12, 2)    default '0.00' comment '总购买金额',
+    last_buy_time   datetime comment '最后一次购买时间',
+    customer_level  int(4)            default 0 comment '客户等级',
+    create_time     datetime not null default now() comment '关注时间',
+    modified_by     int comment '修改者',
+    modified_time   datetime comment '修改时间',
+    is_delete       int(1)   not null default 0 comment '软删除: 0->未删除,1->已删除'
+) comment '客户关注表';
+
+```
+
+## 收货地址表
+
+```sql
+create table recp_receive_address
+(
+    receive_id      int          not null primary key auto_increment comment 'ID',
+    buyer_id        int          not null comment '买家ID',
+    receive_name    varchar(32)  not null comment '收货人名称',
+    customer_mobile varchar(32)  not null comment '手机号',
+    default_status  int(1)                default 0 comment '是否为默认',
+    province        varchar(255) not null comment '省份/直辖市',
+    city            varchar(255) not null comment '城市',
+    county          varchar(255) not null comment '区/县',
+    detail_address  varchar(255) not null comment '详细地址(街道)',
+    create_time     datetime     not null default now() comment '创建时间',
+    modified_by     int comment '修改者',
+    modified_time   datetime comment '修改时间'
+) comment '收货地址表';
+
+```
+
+
+
+
+
+# 订单
+
+## 购物车表
+
+```sql
+create table recp_order_cart
+(
+    cart_id       int      not null primary key auto_increment comment 'ID',
+    buyer_id      int      not null comment '买家ID',
+    seller_id     int      not null comment '卖家ID（商品属于那个卖家）',
+    goods_id      int      not null comment '商品ID',
+    spec_id       int      not null comment '商品规格ID',
+    price_id      int      not null comment '商品规格价格ID',
+    goods_amount  int      not null comment '加入购物车商品数量',
+    create_time   datetime not null default now() comment '创建时间',
+    modified_by   int comment '修改者',
+    modified_time datetime comment '修改时间'
+) comment '购物车表';
+
+```
+
+## 订单表
+
+```sql
+create table recp_order
+(
+    order_id          int          not null primary key auto_increment comment 'ID',
+    order_number      varchar(255) not null comment '订单编号',
+    buyer_id          int          not null comment '买家ID',
+    trade_status      int          not null default 0 comment '交易状态：0->进行中,1->已完成,2->已取消,3->已超时,4->已结算',
+    pay_status        int          not null default 0 comment '支付状态：0->未付款,1->已付款',
+    order_money       decimal(12, 2)        default '0.00' comment '订单总金额',
+    pay_money         decimal(12, 2)        default '0.00' comment '付款金额',
+    goods_total_money decimal(12, 2)        default '0.00' comment '商品最终总金额',
+    pay_time          datetime comment '支付时间',
+    pay_platform      int comment '支付平台：0->余额,1->微信,2->支付宝',
+    trade_number      varchar(255) comment '交易编号:比如支付宝给我平台的订单号',
+    create_time       datetime     not null default now() comment '创建时间',
+    modified_by       int comment '修改者',
+    modified_time     datetime comment '修改时间',
+    is_delete         int(1)       not null default 0 comment '软删除: 0->未删除,1->已删除'
+) comment '订单表';
+
+```
+
+## 订单子项目表
+
+```sql
+create table recp_order_item
+(
+    order_item_id         int            not null primary key auto_increment comment 'ID',
+    buyer_id              int            not null comment '买家ID',
+    seller_id             int            not null comment '所属卖家ID',
+    order_id              int            not null comment '订单ID',
+    order_number          varchar(255)   not null comment '订单编号，订单表的订单编号',
+    order_item_number     varchar(255)   not null comment '子订单编号,买卖家展示',
+    order_status          int                     default 0 comment '提交状态,0->未提交,1->已提交,2->已取消',
+    delivery_status       int            not null default 0 comment '配送状态：0->待发货,1->待收货,2->已收货',
+    customer_status       int            not null default 0 comment '卖家状态：0->待收货,1->已确认收货,2->已签收,3->换货,4->退货',
+    goods_id              int            not null comment '商品ID',
+    spec_id               int            not null comment '商品规格ID',
+    price_id              int            not null comment '商品规格价格ID',
+    goods_amount          int            not null comment '商品数量',
+    goods_name            varchar(256)   not null comment '商品名称',
+    goods_image           varchar(1024)  not null comment '商品图片',
+    spec_name             varchar(128)   not null comment '商品规格名称',
+    goods_price           decimal(10, 2) not null default '0.00' comment '价格',
+    total_money           decimal(12, 2)          default '0.00' comment '订单总金额',
+    delivery_money        decimal(12, 2)          default '0.00' comment '订单总金额',
+    receive_name          varchar(32)    not null comment '收货人名称',
+    receive_mobile        varchar(32)    not null comment '收货人手机号',
+    receive_address       varchar(255)   not null comment '收货地址',
+    logistics_platform    int                     default 0 comment '物流平台：0->顺丰,1->邮政,2->中通...',
+    logistics_number      varchar(255)   not null comment '物流编号',
+    seller_finish_time    datetime comment '卖家已完成发货时间',
+    delivery_finish_time  datetime comment '配送完成时间，到货时间',
+    delivery_receive_time datetime comment '签收时间',
+    customer_finish_time  datetime comment '确认收货时间',
+    create_time           datetime       not null default now() comment '创建时间',
+    modified_by           int comment '修改者',
+    modified_time         datetime comment '修改时间',
+    is_delete             int(1)         not null default 0 comment '软删除: 0->未删除,1->已删除'
+)comment '订单子项目表';
+
+```
+
