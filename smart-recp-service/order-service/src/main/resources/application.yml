@@ -1,0 +1,21 @@
+server:
+  port: 9004
+
+
+spring:
+  application:
+    name: order-service
+  profiles:
+    include: dev
+  datasource:
+    druid:
+      url: jdbc:mysql://${db-mysql.host}:${db-mysql.port}/smart-recp?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+      username: ${db-mysql.username}
+      password: ${db-mysql.password}
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${registry-center.host}:${registry-center.port}
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher

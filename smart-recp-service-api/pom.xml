@@ -16,6 +16,7 @@
     <modules>
         <module>goods-service-api</module>
         <module>user-service-api</module>
+        <module>order-service-api</module>
     </modules>
 
 
