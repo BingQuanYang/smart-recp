@@ -45,7 +45,7 @@ public class OrderBuyerController {
 
     @PostMapping("/generate -order")
     @ApiOperation("生成订单")
-    public RestResult<Boolean> generateOrder(@RequestBody GenerateOrderDTO generateOrderDTO) {
+    public RestResult<Boolean> generateOrder(@RequestBody GenerateOrderDTO generateOrderDTO) throws BaseException {
         return RestResult.success(orderBuyerService.generateOrder(generateOrderDTO));
     }
 }
