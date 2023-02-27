@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan("com.smart.recp.service.goods.feign.service")
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.smart.recp.service.goods")
 public class FeignConfig {
 }

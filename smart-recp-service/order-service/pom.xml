@@ -47,6 +47,11 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.smart.recp</groupId>
+            <artifactId>goods-service-api</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
