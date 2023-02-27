@@ -1,6 +1,7 @@
 package com.smart.recp.service.order.service;
 
 import com.smart.recp.common.core.base.BaseException;
+import com.smart.recp.service.goods.vo.GoodsVO;
 import com.smart.recp.service.order.dto.OrderCartDTO;
 import com.smart.recp.service.order.vo.OrderCartVO;
 

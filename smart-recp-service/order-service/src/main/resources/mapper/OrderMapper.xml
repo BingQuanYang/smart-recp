@@ -1,29 +1,144 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.smart.recp.service.order.mapper.OrderMapper">
-  <resultMap id="BaseResultMap" type="com.smart.recp.service.order.entity.Order">
-    <!--@mbg.generated-->
-    <!--@Table recp_order-->
-    <id column="order_id" jdbcType="INTEGER" property="orderId" />
-    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
-    <result column="buyer_id" jdbcType="INTEGER" property="buyerId" />
-    <result column="trade_status" jdbcType="INTEGER" property="tradeStatus" />
-    <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
-    <result column="order_money" jdbcType="DECIMAL" property="orderMoney" />
-    <result column="pay_money" jdbcType="DECIMAL" property="payMoney" />
-    <result column="goods_total_money" jdbcType="DECIMAL" property="goodsTotalMoney" />
-    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
-    <result column="pay_platform" jdbcType="INTEGER" property="payPlatform" />
-    <result column="trade_number" jdbcType="VARCHAR" property="tradeNumber" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_by" jdbcType="INTEGER" property="modifiedBy" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    order_id, order_number, buyer_id, trade_status, pay_status, order_money, pay_money, 
-    goods_total_money, pay_time, pay_platform, trade_number, create_time, modified_by, 
-    modified_time, is_delete
-  </sql>
+    <resultMap id="BaseResultMap" type="com.smart.recp.service.order.entity.Order">
+        <!--@mbg.generated-->
+        <!--@Table recp_order-->
+        <id column="order_id" jdbcType="INTEGER" property="orderId"/>
+        <result column="order_number" jdbcType="VARCHAR" property="orderNumber"/>
+        <result column="buyer_id" jdbcType="INTEGER" property="buyerId"/>
+        <result column="trade_status" jdbcType="INTEGER" property="tradeStatus"/>
+        <result column="pay_status" jdbcType="INTEGER" property="payStatus"/>
+        <result column="order_money" jdbcType="DECIMAL" property="orderMoney"/>
+        <result column="pay_money" jdbcType="DECIMAL" property="payMoney"/>
+        <result column="goods_total_money" jdbcType="DECIMAL" property="goodsTotalMoney"/>
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
+        <result column="pay_platform" jdbcType="INTEGER" property="payPlatform"/>
+        <result column="trade_number" jdbcType="VARCHAR" property="tradeNumber"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_by" jdbcType="INTEGER" property="modifiedBy"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
+    </resultMap>
+
+    <resultMap id="CascadeResultMap" type="com.smart.recp.service.order.entity.Order" extends="BaseResultMap">
+        <collection property="orderItemList"
+                    resultMap="com.smart.recp.service.order.mapper.OrderItemMapper.BaseResultMap"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        order_id, order_number, buyer_id, trade_status, pay_status, order_money, pay_money,
+        goods_total_money, pay_time, pay_platform, trade_number, create_time, modified_by,
+        modified_time, is_delete
+    </sql>
+
+    <select id="getCascadeById" resultMap="CascadeResultMap">
+        select o.order_id,
+               o.order_number,
+               o.buyer_id,
+               o.trade_status,
+               o.pay_status,
+               o.order_money,
+               o.pay_money,
+               o.goods_total_money,
+               o.pay_time,
+               o.pay_platform,
+               o.trade_number,
+               o.create_time,
+               o.modified_by,
+               o.modified_time,
+               o.is_delete,
+               oi.order_item_id,
+               oi.buyer_id,
+               oi.seller_id,
+               oi.order_id,
+               oi.order_number,
+               oi.order_item_number,
+               oi.order_status,
+               oi.delivery_status,
+               oi.customer_status,
+               oi.goods_id,
+               oi.spec_id,
+               oi.price_id,
+               oi.goods_amount,
+               oi.goods_name,
+               oi.goods_image,
+               oi.spec_name,
+               oi.goods_price,
+               oi.total_money,
+               oi.delivery_money,
+               oi.receive_name,
+               oi.receive_mobile,
+               oi.receive_address,
+               oi.logistics_platform,
+               oi.logistics_number,
+               oi.seller_finish_time,
+               oi.delivery_finish_time,
+               oi.delivery_receive_time,
+               oi.customer_finish_time,
+               oi.create_time,
+               oi.modified_by,
+               oi.modified_time,
+               oi.is_delete
+        from recp_order o
+                     left join recp_order_item oi on o.order_id = oi.order_id
+        where o.order_id = #{orderId}
+    </select>
+
+    <select id="listCascade" resultMap="CascadeResultMap">
+        select o.order_id,
+               o.order_number,
+               o.buyer_id,
+               o.trade_status,
+               o.pay_status,
+               o.order_money,
+               o.pay_money,
+               o.goods_total_money,
+               o.pay_time,
+               o.pay_platform,
+               o.trade_number,
+               o.create_time,
+               o.modified_by,
+               o.modified_time,
+               o.is_delete,
+               oi.order_item_id,
+               oi.buyer_id,
+               oi.seller_id,
+               oi.order_id,
+               oi.order_number,
+               oi.order_item_number,
+               oi.order_status,
+               oi.delivery_status,
+               oi.customer_status,
+               oi.goods_id,
+               oi.spec_id,
+               oi.price_id,
+               oi.goods_amount,
+               oi.goods_name,
+               oi.goods_image,
+               oi.spec_name,
+               oi.goods_price,
+               oi.total_money,
+               oi.delivery_money,
+               oi.receive_name,
+               oi.receive_mobile,
+               oi.receive_address,
+               oi.logistics_platform,
+               oi.logistics_number,
+               oi.seller_finish_time,
+               oi.delivery_finish_time,
+               oi.delivery_receive_time,
+               oi.customer_finish_time,
+               oi.create_time,
+               oi.modified_by,
+               oi.modified_time,
+               oi.is_delete
+        from recp_order o
+                     left join recp_order_item oi on o.order_id = oi.order_id
+                where o.is_delete = 0
+        <if test="buyerId != null">
+            and o.buyer_id = #{buyerId}
+        </if>
+    </select>
 </mapper>
