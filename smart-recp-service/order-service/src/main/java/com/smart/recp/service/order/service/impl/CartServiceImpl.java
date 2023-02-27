@@ -4,7 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.enums.ResultCode;
+import com.smart.recp.common.core.result.RestResult;
 import com.smart.recp.common.core.util.BeanCopyUtils;
+import com.smart.recp.service.goods.feign.service.IGoodsBuyerClient;
+import com.smart.recp.service.goods.vo.GoodsSpecPriceVO;
+import com.smart.recp.service.goods.vo.GoodsSpecVO;
+import com.smart.recp.service.goods.vo.GoodsVO;
 import com.smart.recp.service.order.dto.OrderCartDTO;
 import com.smart.recp.service.order.entity.OrderCart;
 import com.smart.recp.service.order.mapper.OrderCartMapper;
@@ -30,6 +35,10 @@ public class CartServiceImpl implements CartService {
     OrderCartMapper orderCartMapper;
 
 
+    @Resource
+    IGoodsBuyerClient goodsBuyerClient;
+
+
     @Override
     public OrderCartVO getById(Integer cartId) throws BaseException {
         try {
@@ -40,9 +49,13 @@ public class CartServiceImpl implements CartService {
             }
             OrderCartVO orderCartVO = new OrderCartVO();
             BeanUtils.copyProperties(orderCart, orderCartVO);
-            //TODO  购物车缺少商品信息
-
-
+            RestResult<GoodsVO> result = goodsBuyerClient.get(orderCartVO.getGoodsId());
+            if (!RestResult.isSuccess(result) || ObjectUtils.isEmpty(result.getData())) {
+                log.error("失败：【getById】 根据ID获取购物车信息失败，ID:{}", cartId);
+                throw new BaseException(ResultCode.ERROR.getStatus(), "根据购物车ID获取购物车信息失败");
+            }
+            GoodsVO goodsVO = result.getData();
+            getCartByGoods(orderCartVO, goodsVO);
             log.info("成功：【getById】根据购物车ID获取购物车信息成功：{}", orderCartVO);
             return orderCartVO;
         } catch (Exception e) {
@@ -127,12 +140,18 @@ public class CartServiceImpl implements CartService {
         try {
             List<OrderCart> orderCartList = orderCartMapper.selectList(new QueryWrapper<OrderCart>().lambda().eq(OrderCart::getBuyerId, buyerId));
             if (ObjectUtils.isEmpty(orderCartList) || orderCartList.size() < 1) {
-                log.error("失败：【listByBuyerId】 根据买家ID查询购物车失败");
+                log.error("失败：【listByBuyerId】 根据买家ID查询购物车失败，buyerId：{}", buyerId);
                 throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家ID查询购物车失败");
             }
             List<OrderCartVO> orderCartVOList = BeanCopyUtils.copyListProperties(orderCartList, OrderCartVO::new);
             for (OrderCartVO orderCartVO : orderCartVOList) {
-                //TODO  购物车缺少商品信息
+                RestResult<GoodsVO> result = goodsBuyerClient.get(orderCartVO.getGoodsId());
+                if (!RestResult.isSuccess(result) || ObjectUtils.isEmpty(result.getData())) {
+                    log.error("失败：【listByBuyerId】 根据买家ID查询购物车失败，buyerId：{}", buyerId);
+                    throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家ID查询购物车失败");
+                }
+                GoodsVO goodsVO = result.getData();
+                getCartByGoods(orderCartVO, goodsVO);
             }
             log.info("成功：【listByBuyerId】 根据买家ID查询购物车成功，{}", orderCartVOList);
             return orderCartVOList;
@@ -140,6 +159,41 @@ public class CartServiceImpl implements CartService {
             e.printStackTrace();
             log.error("失败：【listByBuyerId】 根据买家ID查询购物车失败");
             throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家ID查询购物车失败");
+        }
+    }
+
+    private void getCartByGoods(OrderCartVO orderCartVO, GoodsVO goodsVO) {
+        orderCartVO.setGoodsName(goodsVO.getGoodsName());
+        orderCartVO.setGoodsImage(goodsVO.getGoodsResourceVOList().stream().filter(item -> item.getIsMaster().equals(1)).findFirst().get().getLink());
+        List<GoodsSpecVO> goodsSpecVOList = goodsVO.getGoodsSpecVOList();
+        GoodsSpecVO goodsSpecVO = goodsSpecVOList.stream().filter(item -> item.getSpecId().equals(orderCartVO.getSpecId())).findFirst().get();
+        orderCartVO.setSpecName(goodsSpecVO.getSpecName());
+        //价格
+        List<GoodsSpecPriceVO> goodsSpecPriceVOList = goodsSpecVO.getGoodsSpecPriceVOList();
+        for (GoodsSpecPriceVO goodsSpecPriceVO : goodsSpecPriceVOList) {
+            //零售
+            if (goodsSpecPriceVO.getType().equals(1)) {
+                if (orderCartVO.getGoodsAmount().equals(1)) {
+                    orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
+                    break;
+                }
+                //初始赋值零售
+                orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
+            }
+            //批发
+            if (goodsSpecPriceVO.getMin() < goodsSpecPriceVO.getMax()) {
+                //批发范围内
+                if (goodsSpecPriceVO.getMin() <= orderCartVO.getGoodsAmount() && orderCartVO.getGoodsAmount() <= goodsSpecPriceVO.getMax()) {
+                    orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
+                    break;
+                }
+            } else {
+                //最后一个批发
+                if (goodsSpecPriceVO.getMin() <= orderCartVO.getGoodsAmount()) {
+                    orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
+                    break;
+                }
+            }
         }
     }
 }
