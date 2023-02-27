@@ -96,6 +96,12 @@ public class GoodsServiceImpl implements GoodsService {
             List<GoodsResourceVO> goodsResourceVOList = BeanCopyUtils.copyListProperties(goods.getGoodsResourceList(), GoodsResourceVO::new);
             List<GoodsSpecVO> goodsSpecVOList = BeanCopyUtils.copyListProperties(goods.getGoodsSpecList(), GoodsSpecVO::new, (s, t) -> {
                 List<GoodsSpecPriceVO> goodsSpecPriceVOList = BeanCopyUtils.copyListProperties(s.getGoodsSpecPriceList(), GoodsSpecPriceVO::new);
+                goodsSpecPriceVOList.sort((a, b) -> {
+                    if (!a.getType().equals(b.getType())) {
+                        return a.getType() - b.getType();
+                    }
+                    return a.getMin() - b.getMin();
+                });
                 t.setGoodsSpecPriceVOList(goodsSpecPriceVOList);
             });
             goodsVO.setGoodsResourceVOList(goodsResourceVOList);
