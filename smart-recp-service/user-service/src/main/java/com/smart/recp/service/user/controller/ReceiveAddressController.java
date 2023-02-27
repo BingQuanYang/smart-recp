@@ -24,7 +24,7 @@ public class ReceiveAddressController {
     @GetMapping("/get")
     @ApiOperation("跟ID获取收货地址信息")
     @ApiImplicitParam(name = "receiveId", value = "收货地址ID")
-    public RestResult<ReceiveAddressVO> get(@RequestParam String receiveId) throws BaseException {
+    public RestResult<ReceiveAddressVO> get(@RequestParam Integer receiveId) throws BaseException {
         return RestResult.success(receiveAddressService.getById(receiveId));
     }
 

@@ -7,7 +7,7 @@ import com.smart.recp.service.user.vo.ReceiveAddressVO;
 import java.util.List;
 
 public interface ReceiveAddressService {
-    ReceiveAddressVO getById(String receiveId) throws BaseException;
+    ReceiveAddressVO getById(Integer receiveId) throws BaseException;
 
     boolean add(ReceiveAddressDTO receiveAddressDTO) throws BaseException;
 

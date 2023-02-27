@@ -29,7 +29,7 @@ public class ReceiveAddressServiceImpl implements ReceiveAddressService {
     ReceiveAddressMapper receiveAddressMapper;
 
     @Override
-    public ReceiveAddressVO getById(String receiveId) throws BaseException {
+    public ReceiveAddressVO getById(Integer receiveId) throws BaseException {
         try {
             ReceiveAddress receiveAddress = receiveAddressMapper.selectById(receiveId);
             if (ObjectUtils.isEmpty(receiveAddress)) {
