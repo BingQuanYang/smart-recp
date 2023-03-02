@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
-@FeignClient(value = "goods-service", path = "/goods/buyer")
+@FeignClient(value = "goods-service", path = "/goods/buyer",contextId = "GoodsBuyerClient")
 public interface IGoodsBuyerClient {
 
     @GetMapping("/get")
