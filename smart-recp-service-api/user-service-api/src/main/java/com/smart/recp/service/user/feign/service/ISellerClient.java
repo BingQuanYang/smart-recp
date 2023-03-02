@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(value = "user-service", path = "/user/seller")
+@FeignClient(value = "user-service", path = "/user/seller",contextId = "SellerClient")
 @Component
 public interface ISellerClient {
 
