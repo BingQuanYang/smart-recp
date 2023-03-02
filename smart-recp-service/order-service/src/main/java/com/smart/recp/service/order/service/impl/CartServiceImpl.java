@@ -179,19 +179,20 @@ public class CartServiceImpl implements CartService {
                 }
                 //初始赋值零售
                 orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
-            }
-            //批发
-            if (goodsSpecPriceVO.getMin() < goodsSpecPriceVO.getMax()) {
-                //批发范围内
-                if (goodsSpecPriceVO.getMin() <= orderCartVO.getGoodsAmount() && orderCartVO.getGoodsAmount() <= goodsSpecPriceVO.getMax()) {
-                    orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
-                    break;
-                }
             } else {
-                //最后一个批发
-                if (goodsSpecPriceVO.getMin() <= orderCartVO.getGoodsAmount()) {
-                    orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
-                    break;
+                //批发
+                if (ObjectUtils.isNotEmpty(goodsSpecPriceVO.getMax()) && goodsSpecPriceVO.getMin() < goodsSpecPriceVO.getMax()) {
+                    //批发范围内
+                    if (goodsSpecPriceVO.getMin() <= orderCartVO.getGoodsAmount() && orderCartVO.getGoodsAmount() <= goodsSpecPriceVO.getMax()) {
+                        orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
+                        break;
+                    }
+                } else {
+                    //最后一个批发
+                    if (goodsSpecPriceVO.getMin() <= orderCartVO.getGoodsAmount()) {
+                        orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
+                        break;
+                    }
                 }
             }
         }
