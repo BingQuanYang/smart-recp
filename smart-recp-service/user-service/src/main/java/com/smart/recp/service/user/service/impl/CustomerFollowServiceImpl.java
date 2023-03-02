@@ -22,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -152,6 +153,7 @@ public class CustomerFollowServiceImpl implements CustomerFollowService {
         result.setPageSize(selectPage.getSize());
         result.setTotalCount(selectPage.getTotal());
         result.setPages(selectPage.getPages());
+        result.setPage(selectPage.getCurrent());
         log.info("成功：【list】 查询客户关注列表失败成功，{}", result);
         return result;
     }
