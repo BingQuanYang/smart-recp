@@ -42,7 +42,7 @@ public class CartController {
         return RestResult.success(cartService.update(orderCartDTO));
     }
 
-    @DeleteMapping("/remvoe")
+    @DeleteMapping("/remove")
     @ApiOperation("根据购物车ID列表删除购物车")
     @ApiImplicitParam(name = "cartIdList", value = "购物车ID列表")
     public RestResult<Integer> remove(@RequestParam List<Integer> cartIdList) throws BaseException {
