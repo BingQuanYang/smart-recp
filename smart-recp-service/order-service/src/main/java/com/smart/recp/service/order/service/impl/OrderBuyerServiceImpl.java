@@ -32,6 +32,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ybq
@@ -148,6 +149,14 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
             if (insert != orderItemList.size()) {
                 log.error("失败：【generateOrder】生成订单失败，添加订单子项目失败");
                 throw new BaseException(ResultCode.ERROR.getStatus(), "生成订单失败");
+            }
+            List<Integer> deleteCartIdList = orderCartVOList.stream().filter(item -> ObjectUtils.isNotEmpty(item.getCartId())).map(item -> item.getCartId()).collect(Collectors.toList());
+            if (ObjectUtils.isNotEmpty(deleteCartIdList) && deleteCartIdList.size() >= 1) {
+                Integer delete = cartService.deleteByIdList(deleteCartIdList);
+                if (delete != deleteCartIdList.size()) {
+                    log.error("失败：【generateOrder】生成订单失败，删除购物车失败, CartIdList:{}", deleteCartIdList);
+                    throw new BaseException(ResultCode.ERROR.getStatus(), "生成订单失败");
+                }
             }
             //TODO 倒计时30分钟检查订单是否支付
             log.info("成功：【generateOrder】生成订单成功");
