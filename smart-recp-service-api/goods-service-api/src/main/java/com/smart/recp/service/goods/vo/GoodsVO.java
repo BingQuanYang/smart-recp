@@ -1,11 +1,13 @@
 package com.smart.recp.service.goods.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -82,6 +84,11 @@ public class GoodsVO {
 
     @ApiModelProperty(value = "图片（主图）")
     private String image;
+
+    @ApiModelProperty(value = "最低价格")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private BigDecimal minPrice;
+
 
     List<GoodsResourceVO> goodsResourceVOList;
 

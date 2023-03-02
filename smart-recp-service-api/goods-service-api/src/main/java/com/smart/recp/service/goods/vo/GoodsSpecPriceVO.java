@@ -1,5 +1,6 @@
 package com.smart.recp.service.goods.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class GoodsSpecPriceVO {
     private Integer specId;
 
     @ApiModelProperty(value = "价格")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private BigDecimal price;
 
     @ApiModelProperty(value = "类型:1->零售,2->批发,3->VIP")
