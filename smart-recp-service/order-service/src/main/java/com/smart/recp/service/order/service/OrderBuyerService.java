@@ -13,5 +13,5 @@ public interface OrderBuyerService {
 
     PageResult<OrderItemVO> list(Integer page, Integer size, Integer buyerId, Integer delivery_status, Integer customer_status) throws BaseException;
 
-    boolean generateOrder(GenerateOrderDTO generateOrderDTO) throws BaseException;
+    Integer generateOrder(GenerateOrderDTO generateOrderDTO) throws BaseException;
 }

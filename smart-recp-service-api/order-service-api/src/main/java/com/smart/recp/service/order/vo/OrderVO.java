@@ -1,5 +1,6 @@
 package com.smart.recp.service.order.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -35,12 +36,15 @@ public class OrderVO {
     private Integer payStatus;
 
     @ApiModelProperty(value = "订单总金额")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private BigDecimal orderMoney;
 
     @ApiModelProperty(value = "付款金额")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private BigDecimal payMoney;
 
     @ApiModelProperty(value = "商品最终总金额")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private BigDecimal goodsTotalMoney;
 
     @ApiModelProperty(value = "支付时间")

@@ -71,7 +71,7 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
 
     //TODO 分布式事务
     @Override
-    public boolean generateOrder(GenerateOrderDTO generateOrderDTO) throws BaseException {
+    public Integer generateOrder(GenerateOrderDTO generateOrderDTO) throws BaseException {
         try {
             if (ObjectUtils.isEmpty(generateOrderDTO.getReceiveId())) {
                 log.error("失败：【generateOrder】生成订单失败,收货地址ID不能为空");
@@ -160,7 +160,7 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
             }
             //TODO 倒计时30分钟检查订单是否支付
             log.info("成功：【generateOrder】生成订单成功");
-            return true;
+            return orderId;
         } catch (Exception e) {
             log.error("失败：【generateOrder】生成订单失败");
             throw new BaseException(ResultCode.ERROR.getStatus(), "生成订单失败");
