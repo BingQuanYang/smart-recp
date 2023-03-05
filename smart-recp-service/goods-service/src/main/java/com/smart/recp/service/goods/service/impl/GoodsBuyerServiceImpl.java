@@ -69,6 +69,9 @@ public class GoodsBuyerServiceImpl implements GoodsBuyerService {
     public GoodsVO getByGoodsId(Integer goodsId) throws BaseException {
         try {
             GoodsVO goodsVO = goodsService.getCascadeByGoodsId(goodsId);
+            BigDecimal minPrice = null;
+            minPrice = getMinPrice(goodsVO, minPrice);
+            goodsVO.setMinPrice(minPrice);
             if (!goodsVO.getStatus().equals(1)) {
                 log.error("买家端：商品未上架 => goodsId：{},goodsVO:{}", goodsId, goodsVO);
                 throw new Exception();
