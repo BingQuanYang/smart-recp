@@ -16,7 +16,7 @@ import javax.annotation.Resource;
  * @author ybq
  */
 @RestController
-@RequestMapping("/seller/seller")
+@RequestMapping("/user/seller")
 public class SellerController {
     @Resource
     SellerService sellerService;
