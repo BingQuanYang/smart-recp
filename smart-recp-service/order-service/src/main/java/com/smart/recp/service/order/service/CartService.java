@@ -20,4 +20,6 @@ public interface CartService {
     Integer deleteByIdList(List<Integer> cartIdList) throws BaseException;
 
     List<OrderCartVO> listByBuyerId(Integer buyerId) throws BaseException;
+
+    List<OrderCartVO> listByIdList(List<Integer> cartIdList) throws BaseException;
 }

@@ -197,4 +197,32 @@ public class CartServiceImpl implements CartService {
             }
         }
     }
+
+
+    @Override
+    public List<OrderCartVO> listByIdList(List<Integer> cartIdList) throws BaseException {
+        try {
+            List<OrderCart> orderCartList = orderCartMapper.selectBatchIds(cartIdList);
+            if (ObjectUtils.isEmpty(orderCartList) || orderCartList.size() < 1) {
+                log.error("失败：【listByIdList】 根据ID查询购物车失败，cartIdList：{}", cartIdList);
+                throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家ID查询购物车失败");
+            }
+            List<OrderCartVO> orderCartVOList = BeanCopyUtils.copyListProperties(orderCartList, OrderCartVO::new);
+            for (OrderCartVO orderCartVO : orderCartVOList) {
+                RestResult<GoodsVO> result = goodsBuyerClient.get(orderCartVO.getGoodsId());
+                if (!RestResult.isSuccess(result) || ObjectUtils.isEmpty(result.getData())) {
+                    log.error("失败：【listByIdList】 根据ID查询购物车失败，cartIdList：{}", cartIdList);
+                    throw new BaseException(ResultCode.ERROR.getStatus(), "根据ID查询购物车失败");
+                }
+                GoodsVO goodsVO = result.getData();
+                getCartByGoods(orderCartVO, goodsVO);
+            }
+            log.info("成功：【listByIdList】 根据ID查询购物车成功，{}", orderCartVOList);
+            return orderCartVOList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("失败：【listByIdList】 根据ID查询购物车失败");
+            throw new BaseException(ResultCode.ERROR.getStatus(), "根据ID查询购物车失败");
+        }
+    }
 }

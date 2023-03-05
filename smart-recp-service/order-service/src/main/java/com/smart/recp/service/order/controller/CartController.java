@@ -28,6 +28,13 @@ public class CartController {
         return RestResult.success(cartService.getById(cartId));
     }
 
+    @GetMapping("/listById")
+    @ApiOperation("根据ID列表获取购物车信息")
+    @ApiImplicitParam(name = "cartIdList", value = "ID列表")
+    public RestResult<List<OrderCartVO>> listByIdList(@RequestParam List<Integer> cartIdList) throws BaseException {
+        return RestResult.success(cartService.listByIdList(cartIdList));
+    }
+
 
     @PostMapping("/add")
     @ApiOperation("添加购物车")
