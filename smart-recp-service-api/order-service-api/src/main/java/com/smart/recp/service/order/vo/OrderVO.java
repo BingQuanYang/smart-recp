@@ -1,5 +1,6 @@
 package com.smart.recp.service.order.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -55,6 +56,9 @@ public class OrderVO {
 
     @ApiModelProperty(value = "交易编号:比如支付宝给我平台的订单号")
     private String tradeNumber;
+
+    @ApiModelProperty(value = "创建时间")
+    private LocalDateTime createTime;
 
     @ApiModelProperty(value = "修改者")
     private Integer modifiedBy;
