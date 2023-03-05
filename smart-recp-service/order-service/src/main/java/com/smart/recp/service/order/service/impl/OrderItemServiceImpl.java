@@ -98,13 +98,13 @@ public class OrderItemServiceImpl implements OrderItemService {
             BeanUtils.copyProperties(orderItemDTO, orderItem);
             int update = orderItemMapper.updateById(orderItem);
             if (update < 1) {
-                log.info("失败：【update】修改订单列表信息失败,{}", orderItemDTO);
+                log.error("失败：【update】修改订单列表信息失败,{}", orderItemDTO);
                 throw new BaseException(ResultCode.ERROR, "修改订单列表信息失败");
             }
             log.info("成功：【update】修改订单列表信息成功,{}", orderItemDTO);
             return true;
         } catch (Exception e) {
-            log.info("失败：【update】修改订单列表信息失败,{}", orderItemDTO);
+            log.error("失败：【update】修改订单列表信息失败,{}", orderItemDTO);
             throw new BaseException(ResultCode.ERROR, "修改订单列表信息失败");
         }
     }
@@ -116,7 +116,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             for (OrderItem orderItem : orderItemList) {
                 int insert = orderItemMapper.insert(orderItem);
                 if (insert < 1) {
-                    log.info("失败：【addList】添加订单列表信息失败,orderItem：{}", orderItem);
+                    log.error("失败：【addList】添加订单列表信息失败,orderItem：{}", orderItem);
                     throw new BaseException(ResultCode.ERROR, "添加订单列表信息失败");
                 }
                 sum += 1;
@@ -124,8 +124,24 @@ public class OrderItemServiceImpl implements OrderItemService {
             log.info("成功：【addList】添加订单列表信息成功");
             return sum;
         } catch (Exception e) {
-            log.info("失败：【addList】添加订单列表信息失败,orderItemList：{}", orderItemList);
+            log.error("失败：【addList】添加订单列表信息失败,orderItemList：{}", orderItemList);
             throw new BaseException(ResultCode.ERROR, "添加订单列表信息失败");
+        }
+    }
+
+    @Override
+    public int updateOrderStatusByOrderId(OrderItem orderItem) throws BaseException {
+        try {
+            int update = orderItemMapper.update(orderItem, new QueryWrapper<OrderItem>().lambda().eq(OrderItem::getOrderId, orderItem.getOrderId()));
+            if (update < 1) {
+                log.error("失败：【updateOrderStatusByOrderId】修改订单列表信息失败,{}", orderItem);
+                throw new BaseException(ResultCode.ERROR, "修改订单列表信息失败");
+            }
+            log.info("成功：【updateOrderStatusByOrderId】修改订单列表信息成功,{}", orderItem);
+            return update;
+        } catch (Exception e) {
+            log.error("失败：【updateOrderStatusByOrderId】修改订单列表信息失败,{}", orderItem);
+            throw new BaseException(ResultCode.ERROR, "修改订单列表信息失败");
         }
     }
 }

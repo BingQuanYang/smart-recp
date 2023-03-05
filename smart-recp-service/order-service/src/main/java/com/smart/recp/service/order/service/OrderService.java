@@ -30,4 +30,8 @@ public interface OrderService {
 
 
     Order add(Order order) throws BaseException;
+
+    boolean update(Order order) throws BaseException;
+
+    PageResult<OrderVO> listPendingPay(Integer page, Integer size, Integer buyerId) throws BaseException;
 }

@@ -16,4 +16,6 @@ public interface OrderItemService {
     boolean update(OrderItemDTO orderItemDTO) throws BaseException;
 
     int addList(List<OrderItem> orderItemList) throws BaseException;
+
+    int updateOrderStatusByOrderId(OrderItem orderItem) throws BaseException;
 }

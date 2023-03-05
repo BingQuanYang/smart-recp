@@ -38,7 +38,7 @@ public class OrderPlatformController {
             @ApiImplicitParam(name = "page", value = "当前页"),
             @ApiImplicitParam(name = "size", value = "一页多少天数据")
     })
-    public RestResult<PageResult<OrderVO>> get(@RequestParam Integer page, @RequestParam Integer size) throws BaseException {
+    public RestResult<PageResult<OrderVO>> list(@RequestParam Integer page, @RequestParam Integer size) throws BaseException {
         return RestResult.success(orderPlatformService.list(page, size));
     }
 

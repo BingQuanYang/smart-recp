@@ -21,17 +21,20 @@ import com.smart.recp.service.order.service.OrderItemService;
 import com.smart.recp.service.order.service.OrderService;
 import com.smart.recp.service.order.vo.OrderCartVO;
 import com.smart.recp.service.order.vo.OrderItemVO;
+import com.smart.recp.service.order.vo.OrderVO;
 import com.smart.recp.service.user.feign.service.IReceiveAddressClient;
 import com.smart.recp.service.user.vo.ReceiveAddressVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -70,6 +73,7 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
 
 
     //TODO 分布式事务
+    @Transactional
     @Override
     public Integer generateOrder(GenerateOrderDTO generateOrderDTO) throws BaseException {
         try {
@@ -78,13 +82,14 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
                 throw new BaseException(ResultCode.ERROR.getStatus(), "请选择收货地址");
             }
             List<OrderCartDTO> orderCartDTOList = generateOrderDTO.getOrderCartDTOList();
-            //查询购物信息
+            //查询购物车信息
             List<OrderCartVO> orderCartVOList = new ArrayList<>();
             for (OrderCartDTO orderCartDTO : orderCartDTOList) {
                 Integer cartId = orderCartDTO.getCartId();
                 if (ObjectUtils.isNotEmpty(cartId)) {
                     OrderCartVO byId = cartService.getById(cartId);
                     orderCartVOList.add(byId);
+                    continue;
                 }
                 OrderCartVO orderCartVO = new OrderCartVO();
                 BeanUtils.copyProperties(orderCartDTO, orderCartVO);
@@ -104,15 +109,15 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
             }
             //计算订单总金额
             BigDecimal orderMoney = new BigDecimal("0.00");
-            orderCartVOList.forEach(item -> {
+            for (OrderCartVO item : orderCartVOList) {
                 BigDecimal price = item.getPrice();
                 Integer goodsAmount = item.getGoodsAmount();
-                orderMoney.add(price.multiply(BigDecimal.valueOf(goodsAmount)));
-            });
+                orderMoney = orderMoney.add(price.multiply(BigDecimal.valueOf(goodsAmount)));
+            }
 
             Order order = new Order();
             order.setBuyerId(buyerId);
-            order.setOrderNumber(String.format("SMART-RECP-ORDER{}-{}", buyerId, UUID.fastUUID()));
+            order.setOrderNumber(String.format("SMART-RECP-ORDER%s-%s", buyerId, UUID.fastUUID()));
             order.setOrderMoney(orderMoney);
             order.setGoodsTotalMoney(orderMoney);
             //添加订单
@@ -124,7 +129,7 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
                 OrderItem orderItem = new OrderItem();
                 orderItem.setOrderId(orderId);
                 orderItem.setOrderNumber(orderNumber);
-                orderItem.setOrderItemNumber(String.format("SMART-RECP-ORDER-ITEM{}-{}", buyerId, UUID.fastUUID()));
+                orderItem.setOrderItemNumber(String.format("SMART-RECP-ORDER-ITEM%s-%s", buyerId, UUID.fastUUID()));
                 BeanUtils.copyProperties(orderCartVO, orderItem);
                 orderItem.setGoodsPrice(orderCartVO.getPrice());
                 BigDecimal totalMoney = orderCartVO.getPrice().multiply(new BigDecimal(orderCartVO.getGoodsAmount()));
@@ -137,13 +142,14 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
                 ReceiveAddressVO addressVO = addressVORestResult.getData();
                 orderItem.setReceiveName(addressVO.getReceiveName());
                 orderItem.setReceiveMobile(addressVO.getCustomerMobile());
-                orderItem.setReceiveAddress(String.format("{}{}{}{}", addressVO.getProvince(), addressVO.getCity(), addressVO.getCounty(), addressVO.getDetailAddress()));
+                orderItem.setReceiveAddress(String.format("%s%s%s%s", addressVO.getProvince(), addressVO.getCity(), addressVO.getCounty(), addressVO.getDetailAddress()));
                 //TODO 减库存加锁
                 RestResult<Boolean> result = stockClient.subtract(orderCartVO.getSpecId(), orderCartVO.getGoodsAmount());
                 if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getData()) || !result.getData()) {
                     log.error("失败：【generateOrder】生成订单失败,扣除库存失败");
                     throw new BaseException(ResultCode.ERROR.getStatus(), result.getMessage());
                 }
+                orderItemList.add(orderItem);
             }
             int insert = orderItemService.addList(orderItemList);
             if (insert != orderItemList.size()) {
@@ -185,9 +191,8 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
                 }
                 //初始赋值零售
                 orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
-            }
-            //批发
-            if (goodsSpecPriceVO.getMin() < goodsSpecPriceVO.getMax()) {
+                continue;
+            } else if (ObjectUtils.isNotEmpty(goodsSpecPriceVO.getMax()) && goodsSpecPriceVO.getMin() < goodsSpecPriceVO.getMax()) {
                 //批发范围内
                 if (goodsSpecPriceVO.getMin() <= orderCartVO.getGoodsAmount() && orderCartVO.getGoodsAmount() <= goodsSpecPriceVO.getMax()) {
                     orderCartVO.setPrice(goodsSpecPriceVO.getPrice());
@@ -204,4 +209,73 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
     }
 
 
+    @Override
+    public OrderVO getPendingPayOrderById(Integer orderId) throws BaseException {
+        OrderVO cascadeById = orderService.getCascadeById(orderId);
+        if (!Integer.valueOf(0).equals(cascadeById.getPayStatus())) {
+            throw new BaseException(ResultCode.ERROR.getStatus(), "获取待支付订单失败");
+        }
+        return cascadeById;
+    }
+
+    @Override
+    public boolean pay(Integer buyerId, Integer orderId) throws BaseException {
+        try {
+            OrderVO orderVO = orderService.getCascadeById(orderId);
+            //TODO 判断属不属于该买家
+            if (!Integer.valueOf(0).equals(orderVO.getPayStatus()) || !Integer.valueOf(0).equals(orderVO.getTradeStatus())) {
+                log.error("失败：【pay】支付失败，该订单不是订待支付状态：ID{}", orderId);
+                throw new BaseException(ResultCode.ERROR.getStatus(), "支付失败，该订单不是订待支付状态");
+            }
+            //TODO 支付：扣余额 等
+
+            Order order = new Order();
+            order.setOrderId(orderVO.getOrderId());
+            order.setPayStatus(1);
+            order.setTradeStatus(1);
+
+            boolean flag = orderService.update(order);
+            if (!flag) {
+                throw new BaseException(ResultCode.ERROR);
+            }
+            /**
+             * 支付成功修改支付状态
+             */
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrderId(orderVO.getOrderId());
+            orderItem.setOrderStatus(1);
+            int update = orderItemService.updateOrderStatusByOrderId(orderItem);
+
+            log.info("成功：【pay】支付成功");
+            return true;
+        } catch (Exception e) {
+            log.error("失败：【pay】支付失败，");
+            throw new BaseException(ResultCode.ERROR.getStatus(), "支付失败，该订单不是订待支付状态");
+        }
+    }
+
+
+    @Override
+    public PageResult<OrderItemVO> listPendingPay(Integer page, Integer size, Integer buyerId) throws BaseException {
+        try {
+            PageResult<OrderVO> pageResult = orderService.listPendingPay(page, size, buyerId);
+            PageResult<OrderItemVO> result = new PageResult<>();
+            BeanUtils.copyProperties(pageResult, result);
+            List<OrderItemVO> orderItemVOList = new ArrayList<>();
+            for (OrderVO item : pageResult.getList()) {
+                OrderVO orderVO = orderService.getCascadeById(item.getOrderId());
+                OrderItemVO orderItemVO = orderVO.getOrderItemVOList().stream().findFirst().get();
+                if (ObjectUtils.isNotEmpty(orderItemVO)) {
+                    orderItemVOList.add(orderItemVO);
+                }
+            }
+            result.setList(orderItemVOList);
+            log.info("成功：【listPendingPay】根据买家ID:{}查询待支付订单列表成功", buyerId);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("失败：【listPendingPay】根据买家ID:{}查询待支付订单列表失败", buyerId);
+            throw new BaseException(ResultCode.ERROR, "查询待支付订单列表失败");
+        }
+    }
 }
