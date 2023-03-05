@@ -52,6 +52,12 @@ public class ReceiveAddressServiceImpl implements ReceiveAddressService {
         try {
             ReceiveAddress receiveAddress = new ReceiveAddress();
             BeanUtils.copyProperties(receiveAddressDTO, receiveAddress);
+            if (Integer.valueOf(1).equals(receiveAddress.getDefaultStatus())) {
+                ReceiveAddress temp = new ReceiveAddress();
+                temp.setDefaultStatus(0);
+                int len = receiveAddressMapper.update(temp
+                        , new QueryWrapper<ReceiveAddress>().lambda().eq(ReceiveAddress::getBuyerId, receiveAddress.getBuyerId()));
+            }
             int insert = receiveAddressMapper.insert(receiveAddress);
             if (insert < 1) {
                 log.error("失败：【add】添加收货地址失败");
@@ -71,6 +77,12 @@ public class ReceiveAddressServiceImpl implements ReceiveAddressService {
         try {
             ReceiveAddress receiveAddress = new ReceiveAddress();
             BeanUtils.copyProperties(receiveAddressDTO, receiveAddress);
+            if (Integer.valueOf(1).equals(receiveAddress.getDefaultStatus())) {
+                ReceiveAddress temp = new ReceiveAddress();
+                temp.setDefaultStatus(0);
+                int len = receiveAddressMapper.update(temp
+                        , new QueryWrapper<ReceiveAddress>().lambda().eq(ReceiveAddress::getBuyerId, receiveAddress.getBuyerId()));
+            }
             int update = receiveAddressMapper.updateById(receiveAddress);
             if (update < 1) {
                 log.error("失败：【update】修改收货地址失败");
@@ -118,6 +130,25 @@ public class ReceiveAddressServiceImpl implements ReceiveAddressService {
             e.printStackTrace();
             log.error("失败：【listByBuyerId】 根据买家ID查询收货地址失败");
             throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家ID查询收货地址失败");
+        }
+    }
+
+    @Override
+    public ReceiveAddressVO getDefaultByBuyerId(Integer buyerId) throws BaseException {
+        try {
+            ReceiveAddress receiveAddress = receiveAddressMapper.selectOne(new QueryWrapper<ReceiveAddress>().lambda().eq(ReceiveAddress::getBuyerId, buyerId).eq(ReceiveAddress::getDefaultStatus, 1));
+            if (ObjectUtils.isEmpty(receiveAddress)) {
+                log.error("失败：【getDefaultByBuyerId】 根据买家ID获取默认收货地址信息失败，ID:{}", buyerId);
+                throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家ID获取默认收货地址信息失败");
+            }
+            ReceiveAddressVO receiveAddressVO = new ReceiveAddressVO();
+            BeanUtils.copyProperties(receiveAddress, receiveAddressVO);
+            log.info("成功：【getDefaultByBuyerId】根据买家ID获取默认收货地址信息成功：{}", receiveAddressVO);
+            return receiveAddressVO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("失败：【getDefaultByBuyerId】 根据买家ID获取默认收货地址信息失败，ID:{}", buyerId);
+            throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家ID获取默认收货地址信息失败");
         }
     }
 }

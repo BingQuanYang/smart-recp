@@ -16,4 +16,6 @@ public interface ReceiveAddressService {
     Integer deleteByIdList(List<Integer> receiveIdList) throws BaseException;
 
     List<ReceiveAddressVO> listByBuyerId(Integer buyerId) throws BaseException;
+
+    ReceiveAddressVO getDefaultByBuyerId(Integer buyerId) throws BaseException;
 }

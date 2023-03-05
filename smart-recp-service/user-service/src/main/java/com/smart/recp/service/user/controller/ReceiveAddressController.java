@@ -28,6 +28,14 @@ public class ReceiveAddressController {
         return RestResult.success(receiveAddressService.getById(receiveId));
     }
 
+
+    @GetMapping("/default")
+    @ApiOperation("获取默认收货地址信息")
+    @ApiImplicitParam(name = "buyerId", value = "收货地址ID")
+    public RestResult<ReceiveAddressVO> getDefault(@RequestParam Integer buyerId) throws BaseException {
+        return RestResult.success(receiveAddressService.getDefaultByBuyerId(buyerId));
+    }
+
     @PostMapping("/add")
     @ApiOperation("添加收货地址")
     public RestResult<Boolean> add(@RequestBody ReceiveAddressDTO receiveAddressDTO) throws BaseException {
