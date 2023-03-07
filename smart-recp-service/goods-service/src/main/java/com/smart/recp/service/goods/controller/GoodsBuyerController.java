@@ -31,8 +31,12 @@ public class GoodsBuyerController {
 
     @GetMapping("/list/")
     @ApiOperation(value = "获取商品列表")
-    public RestResult<PageResult<GoodsVO>> list() throws BaseException {
-        return RestResult.success(goodsBuyerService.list());
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "categoryId", value = "商品ID"),
+            @ApiImplicitParam(name = "search", value = "搜索")
+    })
+    public RestResult<PageResult<GoodsVO>> list(@RequestParam(required = false) Integer categoryId, @RequestParam(required = false) String search) throws BaseException {
+        return RestResult.success(goodsBuyerService.list(categoryId, search));
     }
 
     @GetMapping("/get")

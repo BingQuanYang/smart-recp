@@ -73,5 +73,7 @@ public class GoodsDTO {
 
     List<GoodsSpecDTO> goodsSpecDTOList;
 
+    @ApiModelProperty(value = "搜索")
+    private String search;
 
 }

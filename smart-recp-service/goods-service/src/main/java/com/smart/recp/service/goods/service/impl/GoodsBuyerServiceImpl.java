@@ -33,9 +33,11 @@ public class GoodsBuyerServiceImpl implements GoodsBuyerService {
      * @return
      */
     @Override
-    public PageResult<GoodsVO> list() throws BaseException {
+    public PageResult<GoodsVO> list(Integer categoryId, String search) throws BaseException {
         GoodsDTO goodsDTO = new GoodsDTO();
         goodsDTO.setStatus(1);
+        goodsDTO.setCategoryId(categoryId);
+        goodsDTO.setSearch(search);
         //TODO
         PageResult<GoodsVO> goodsVOPageResult = goodsService.list(1, 10, goodsDTO);
         if (ObjectUtils.isNotEmpty(goodsVOPageResult.getList())) {

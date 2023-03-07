@@ -52,6 +52,13 @@
             <if test="goodsDTO.status != null">
                 and status = #{goodsDTO.status}
             </if>
+            <if test="goodsDTO.categoryId != null">
+                and category_id = #{goodsDTO.categoryId}
+            </if>
+            <if test="goodsDTO.search != null">
+                and (goods_name like concat('%', #{goodsDTO.search}, '%%') or
+                     sub_title like concat('%', #{goodsDTO.search}, '%%'))
+            </if>
         </trim>
     </select>
 
@@ -93,7 +100,7 @@
                gsp.price_id,
                gsp.spec_id,
                gsp.price,
-               gsp.type type_gsp,
+               gsp.type  type_gsp,
                gsp.min,
                gsp.max
         from recp_goods g
