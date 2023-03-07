@@ -139,7 +139,7 @@ public class CartServiceImpl implements CartService {
     public List<OrderCartVO> listByBuyerId(Integer buyerId) throws BaseException {
         try {
             List<OrderCart> orderCartList = orderCartMapper.selectList(new QueryWrapper<OrderCart>().lambda().eq(OrderCart::getBuyerId, buyerId));
-            if (ObjectUtils.isEmpty(orderCartList) || orderCartList.size() < 1) {
+            if (ObjectUtils.isEmpty(orderCartList)) {
                 log.error("失败：【listByBuyerId】 根据买家ID查询购物车失败，buyerId：{}", buyerId);
                 throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家ID查询购物车失败");
             }

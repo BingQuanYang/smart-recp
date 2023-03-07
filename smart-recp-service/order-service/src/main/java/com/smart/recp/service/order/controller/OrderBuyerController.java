@@ -39,7 +39,7 @@ public class OrderBuyerController {
             @ApiImplicitParam(name = "delivery_status", value = "配送状态"),
             @ApiImplicitParam(name = "customer_status", value = "卖家状态"),
     })
-    public RestResult<PageResult<OrderItemVO>> list(@RequestParam Integer page, @RequestParam Integer size, @RequestParam Integer buyerId, @RequestParam Integer delivery_status, @RequestParam Integer customer_status) throws BaseException {
+    public RestResult<PageResult<OrderItemVO>> list(@RequestParam Integer page, @RequestParam Integer size, @RequestParam Integer buyerId, @RequestParam(required = false) Integer delivery_status, @RequestParam(required = false) Integer customer_status) throws BaseException {
         return RestResult.success(orderBuyerService.list(page, size, buyerId, delivery_status, customer_status));
     }
 

@@ -158,7 +158,7 @@ public class OrderServiceImpl implements OrderService {
                 queryWrapper.eq(Order::getBuyerId, buyerId);
             }
             IPage<Order> resultPage = orderMapper.selectPage(orderPage, queryWrapper);
-            if (ObjectUtils.isEmpty(resultPage) || ObjectUtils.isEmpty(resultPage.getRecords()) || ObjectUtils.isEmpty(resultPage.getRecords().size() < 1)) {
+            if (ObjectUtils.isEmpty(resultPage) || ObjectUtils.isEmpty(resultPage.getRecords())) {
                 log.error("失败：【listPendingPay】查询订单列表信息失败，page:{},size:{},buyerId:{}", page, size, buyerId);
                 throw new BaseException(ResultCode.ERROR.getStatus(), "查询订单列表信息失败");
             }

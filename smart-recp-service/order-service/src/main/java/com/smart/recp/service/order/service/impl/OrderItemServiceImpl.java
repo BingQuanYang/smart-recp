@@ -70,8 +70,11 @@ public class OrderItemServiceImpl implements OrderItemService {
             if (ObjectUtils.isNotEmpty(customer_status)) {
                 lambda.eq(OrderItem::getCustomerStatus, customer_status);
             }
+            lambda.orderByDesc(OrderItem::getCreateTime);
+            //不查待支付的
+            lambda.ne(OrderItem::getOrderStatus, 0);
             IPage<OrderItem> resultPage = orderItemMapper.selectPage(itemPage, lambda);
-            if (ObjectUtils.isEmpty(resultPage) || ObjectUtils.isEmpty(resultPage.getRecords()) || ObjectUtils.isEmpty(resultPage.getRecords().size() < 1)) {
+            if (ObjectUtils.isEmpty(resultPage) || ObjectUtils.isEmpty(resultPage.getRecords())) {
                 log.error("失败：【list】根据卖家ID获取订单列表信息失败");
                 throw new BaseException(ResultCode.ERROR, "根据卖家ID获取订单列表信息失败");
             }
