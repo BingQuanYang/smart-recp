@@ -71,4 +71,22 @@ public class GoodsSellerController {
     public RestResult<List<GoodsCategoryVO>> category() throws BaseException {
         return RestResult.success(goodsSellerService.category());
     }
+
+    @PutMapping("/upper")
+    @ApiOperation(value = "上架商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "goodsId", value = "商品ID")
+    })
+    public RestResult<Boolean> upperByGoodsId(@RequestParam Integer goodsId) throws BaseException {
+        return RestResult.success(goodsSellerService.upperByGoodsId(goodsId));
+    }
+
+    @PutMapping("/lower")
+    @ApiOperation(value = "下架架商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "goodsId", value = "商品ID")
+    })
+    public RestResult<Boolean> lowerByGoodsId(@RequestParam Integer goodsId) throws BaseException {
+        return RestResult.success(goodsSellerService.lowerByGoodsId(goodsId));
+    }
 }

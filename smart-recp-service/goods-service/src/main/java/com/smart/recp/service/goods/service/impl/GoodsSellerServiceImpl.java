@@ -120,4 +120,54 @@ public class GoodsSellerServiceImpl implements GoodsSellerService {
     public List<GoodsCategoryVO> category() throws BaseException {
         return goodsService.getCategoryCascade();
     }
+
+    @Override
+    public Boolean upperByGoodsId(Integer goodsId) throws BaseException {
+        try {
+            GoodsVO byGoodsId = goodsService.getCascadeByGoodsId(goodsId);
+            if (ObjectUtils.isEmpty(byGoodsId)) {
+                log.error("失败：【upperByGoodsId】商品不存在");
+                throw new BaseException(ResultCode.ERROR);
+            }
+            if (!Integer.valueOf(0).equals(byGoodsId.getStatus())) {
+                log.error("失败：【upperByGoodsId】商品不是未上架状态");
+                throw new BaseException(ResultCode.ERROR.getStatus(), "商品不是未上架状态");
+            }
+            GoodsDTO goodsDTO = new GoodsDTO();
+            goodsDTO.setGoodsId(goodsId);
+            goodsDTO.setStatus(2);
+            Boolean flag = goodsService.updateById(goodsDTO);
+            return flag;
+        } catch (Exception e) {
+            log.error("失败：【upperByGoodsId】上架商品失败");
+            e.printStackTrace();
+            throw new BaseException(ResultCode.ERROR.getStatus(), "上架商品失败" + e.getMessage());
+        }
+
+    }
+
+
+    @Override
+    public Boolean lowerByGoodsId(Integer goodsId) throws BaseException {
+        try {
+            GoodsVO byGoodsId = goodsService.getCascadeByGoodsId(goodsId);
+            if (ObjectUtils.isEmpty(byGoodsId)) {
+                log.error("失败：【lowerByGoodsId】商品不存在");
+                throw new BaseException(ResultCode.ERROR);
+            }
+            if (!Integer.valueOf(1).equals(byGoodsId.getStatus())) {
+                log.error("失败：【lowerByGoodsId】商品不是上架状态");
+                throw new BaseException(ResultCode.ERROR.getStatus(), "商品不是上架状态");
+            }
+            GoodsDTO goodsDTO = new GoodsDTO();
+            goodsDTO.setGoodsId(goodsId);
+            goodsDTO.setStatus(0);
+            Boolean flag = goodsService.updateById(goodsDTO);
+            return flag;
+        } catch (Exception e) {
+            log.error("失败：【lowerByGoodsId】下架商品失败");
+            e.printStackTrace();
+            throw new BaseException(ResultCode.ERROR.getStatus(), "下架商品失败" + e.getMessage());
+        }
+    }
 }

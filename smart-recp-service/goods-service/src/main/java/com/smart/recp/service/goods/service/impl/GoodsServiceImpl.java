@@ -57,6 +57,9 @@ public class GoodsServiceImpl implements GoodsService {
         PageResult<GoodsVO> goodsVOPageResult = new PageResult<>();
         try {
             Page<Goods> goodsPage = new Page<>(page, size);
+            if (ObjectUtils.isEmpty(goodsDTO)) {
+                goodsDTO = new GoodsDTO();
+            }
             IPage<Goods> goodsIPage = goodsMapper.selectGoodsList(goodsPage, goodsDTO);
             List<GoodsVO> goodsVOList = BeanCopyUtils.copyListProperties(goodsIPage.getRecords(), GoodsVO::new);
             goodsVOPageResult.setList(goodsVOList);
@@ -456,6 +459,24 @@ public class GoodsServiceImpl implements GoodsService {
             e.printStackTrace();
             log.error("失败：获取商品分类信息失败");
             throw new BaseException(ResultCode.ERROR.getStatus(), "失败：获取商品分类信息失败");
+        }
+    }
+
+    @Override
+    public Boolean updateById(GoodsDTO goodsDTO) throws BaseException {
+        try {
+            Goods goods = new Goods();
+            BeanUtils.copyProperties(goodsDTO, goods);
+            int update = goodsMapper.updateById(goods);
+            if (update < 1) {
+                throw new BaseException(ResultCode.ERROR.getStatus(), "失败：根据ID修改商品信息失败");
+            }
+            log.info("成功：【updateById】根据ID修改商品信息成功，{}", goodsDTO);
+            return true;
+        } catch (Exception e) {
+            log.error("失败：【updateById】根据ID修改商品信息失败，{}", goodsDTO);
+            e.printStackTrace();
+            throw new BaseException(ResultCode.ERROR.getStatus(), "失败：根据ID修改商品信息失败");
         }
     }
 }

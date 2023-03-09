@@ -10,6 +10,7 @@ import com.smart.recp.service.goods.vo.GoodsCategoryVO;
 import com.smart.recp.service.goods.vo.GoodsVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,4 +55,27 @@ public class GoodsPlatformController {
     public RestResult<List<GoodsCategoryVO>> category() throws BaseException {
         return RestResult.success(goodsPlatformService.category());
     }
+
+
+    @PutMapping("/lower")
+    @ApiOperation(value = "下架架商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "goodsId", value = "商品ID")
+    })
+    public RestResult<Boolean> lowerGoods(@RequestParam Integer goodsId) throws BaseException {
+        return RestResult.success(goodsPlatformService.lowerByGoodsId(goodsId));
+    }
+
+
+
+    @PutMapping("/approved")
+    @ApiOperation(value = "审核通过商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "goodsId", value = "商品ID")
+    })
+    public RestResult<Boolean> approvedGoods(@RequestParam Integer goodsId) throws BaseException {
+        return RestResult.success(goodsPlatformService.approvedByGoodsId(goodsId));
+    }
+
+
 }

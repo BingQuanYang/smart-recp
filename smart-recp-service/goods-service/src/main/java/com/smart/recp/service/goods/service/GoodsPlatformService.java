@@ -37,4 +37,8 @@ public interface GoodsPlatformService {
      * @return
      */
     List<GoodsCategoryVO> category() throws BaseException;
+
+    Boolean lowerByGoodsId(Integer goodsId) throws BaseException;
+
+    Boolean approvedByGoodsId(Integer goodsId) throws BaseException;
 }

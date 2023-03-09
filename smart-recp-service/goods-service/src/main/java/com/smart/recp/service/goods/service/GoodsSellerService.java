@@ -60,4 +60,8 @@ public interface GoodsSellerService {
      * @return
      */
     List<GoodsCategoryVO> category() throws BaseException;
+
+    Boolean upperByGoodsId(Integer goodsId) throws BaseException;
+
+    Boolean lowerByGoodsId(Integer goodsId) throws BaseException;
 }

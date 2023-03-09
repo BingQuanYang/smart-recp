@@ -70,4 +70,6 @@ public interface GoodsService {
      * @return
      */
     List<GoodsCategoryVO> getCategoryCascade() throws BaseException;
+
+    Boolean updateById(GoodsDTO goodsDTO) throws BaseException;
 }
