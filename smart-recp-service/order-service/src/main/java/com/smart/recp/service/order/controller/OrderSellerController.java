@@ -38,8 +38,8 @@ public class OrderSellerController {
             @ApiImplicitParam(name = "delivery_status", value = "配送状态"),
             @ApiImplicitParam(name = "customer_status", value = "卖家状态"),
     })
-    public RestResult<PageResult<OrderItemVO>> list(@RequestParam Integer page, @RequestParam Integer size, @RequestParam Integer sellerId, @RequestParam Integer delivery_status, @RequestParam Integer customer_status) throws BaseException {
-        return RestResult.success(orderSellerService.list(page, size, sellerId, delivery_status, customer_status));
+    public RestResult<PageResult<OrderItemVO>> list(@RequestParam Integer page, @RequestParam Integer size, @RequestParam Integer sellerId, @RequestParam(required = false) Integer deliveryStatus, @RequestParam(required = false) Integer customerStatus) throws BaseException {
+        return RestResult.success(orderSellerService.list(page, size, sellerId, deliveryStatus, customerStatus));
     }
 
 
@@ -47,5 +47,11 @@ public class OrderSellerController {
     @ApiOperation("修改订单")
     public RestResult<Boolean> modify(@RequestBody OrderItemDTO orderItemDTO) throws BaseException {
         return RestResult.success(orderSellerService.update(orderItemDTO));
+    }
+
+    @PutMapping("/delivery")
+    @ApiOperation("发货")
+    public RestResult<Boolean> delivery(@RequestBody OrderItemDTO orderItemDTO) throws BaseException {
+        return RestResult.success(orderSellerService.delivery(orderItemDTO));
     }
 }

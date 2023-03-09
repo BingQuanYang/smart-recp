@@ -11,4 +11,6 @@ public interface OrderSellerService {
     PageResult<OrderItemVO> list(Integer page, Integer size, Integer sellerId, Integer delivery_status, Integer customer_status) throws BaseException;
 
     boolean update(OrderItemDTO orderItemDTO) throws BaseException;
+
+    boolean delivery(OrderItemDTO orderItemDTO) throws BaseException;
 }
