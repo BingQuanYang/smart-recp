@@ -1,12 +1,18 @@
 package com.smart.recp.service.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.enums.ResultCode;
+import com.smart.recp.common.core.result.PageResult;
+import com.smart.recp.common.core.util.BeanCopyUtils;
 import com.smart.recp.service.user.dto.UserDTO;
+import com.smart.recp.service.user.entity.Seller;
 import com.smart.recp.service.user.entity.User;
 import com.smart.recp.service.user.mapper.UserMapper;
 import com.smart.recp.service.user.service.UserService;
+import com.smart.recp.service.user.vo.SellerVO;
 import com.smart.recp.service.user.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -14,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author ybq
@@ -127,6 +134,38 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             log.error("失败：修改用户失败,修改数据库失败,userDTO：{}", userDTO);
             throw new BaseException(ResultCode.ERROR, String.format("失败：修改用户失败,修改数据库失败,userDTO：{}", userDTO));
+        }
+    }
+
+
+    @Override
+    public PageResult<UserVO> list(Integer page, Integer size, UserDTO userDTO) throws BaseException {
+        try {
+            LambdaQueryWrapper<User> lambda = new QueryWrapper<User>().lambda();
+            if (ObjectUtils.isNotEmpty(userDTO.getUserId())) {
+                lambda.eq(User::getUserId, userDTO.getUserId());
+            } else if (ObjectUtils.isNotEmpty(userDTO.getAccount())) {
+                lambda.eq(User::getAccount, userDTO.getAccount());
+            } else if (ObjectUtils.isNotEmpty(userDTO.getType())) {
+                lambda.eq(User::getType, userDTO.getType());
+            }
+            Page<User> UserPage = userMapper.selectPage(new Page<User>(page, size), lambda);
+            if (ObjectUtils.isEmpty(UserPage)) {
+                log.error("失败：【list】获取用户列表失败");
+                throw new BaseException(ResultCode.ERROR);
+            }
+            PageResult<UserVO> result = new PageResult<>();
+            result.setPage(UserPage.getCurrent());
+            result.setPageSize(UserPage.getSize());
+            result.setPages(UserPage.getPages());
+            result.setTotalCount(UserPage.getTotal());
+            List<UserVO> UserVOS = BeanCopyUtils.copyListProperties(UserPage.getRecords(), UserVO::new);
+            result.setList(UserVOS);
+            return result;
+        } catch (Exception e) {
+            log.error("失败：【list】获取用户列表失败,page:{},size:{},UserDTO：{}", page, size, userDTO);
+            e.printStackTrace();
+            throw new BaseException(ResultCode.ERROR.getStatus(), "获取用户列表失败");
         }
     }
 }

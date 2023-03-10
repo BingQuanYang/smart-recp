@@ -1,8 +1,12 @@
 package com.smart.recp.service.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.enums.ResultCode;
+import com.smart.recp.common.core.result.PageResult;
+import com.smart.recp.common.core.util.BeanCopyUtils;
 import com.smart.recp.service.user.dto.SellerDTO;
 import com.smart.recp.service.user.entity.Seller;
 import com.smart.recp.service.user.entity.User;
@@ -16,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author ybq
@@ -106,6 +111,35 @@ public class SellerServiceImpl implements SellerService {
         } catch (Exception e) {
             log.error("失败：修改卖家失败,修改数据库失败,sellerDTO：{}", sellerDTO);
             throw new BaseException(ResultCode.ERROR, String.format("失败：修改卖家失败,修改数据库失败,sellerDTO：{}", sellerDTO));
+        }
+    }
+
+    @Override
+    public PageResult<SellerVO> list(Integer page, Integer size, SellerDTO sellerDTO) throws BaseException {
+        try {
+            LambdaQueryWrapper<Seller> lambda = new QueryWrapper<Seller>().lambda();
+            if (ObjectUtils.isNotEmpty(sellerDTO.getSellerId())) {
+                lambda.eq(Seller::getSellerId, sellerDTO.getSellerId());
+            } else if (ObjectUtils.isNotEmpty(sellerDTO.getSellerName())) {
+                lambda.like(Seller::getSellerName, sellerDTO.getSellerName()).or().like(Seller::getSellerAlias, sellerDTO.getSellerAlias());
+            }
+            Page<Seller> sellerPage = sellerMapper.selectPage(new Page<Seller>(page, size), lambda);
+            if (ObjectUtils.isEmpty(sellerPage)) {
+                log.error("失败：【list】获取商家列表失败");
+                throw new BaseException(ResultCode.ERROR);
+            }
+            PageResult<SellerVO> result = new PageResult<>();
+            result.setPage(sellerPage.getCurrent());
+            result.setPageSize(sellerPage.getSize());
+            result.setPages(sellerPage.getPages());
+            result.setTotalCount(sellerPage.getTotal());
+            List<SellerVO> sellerVOS = BeanCopyUtils.copyListProperties(sellerPage.getRecords(), SellerVO::new);
+            result.setList(sellerVOS);
+            return result;
+        } catch (Exception e) {
+            log.error("失败：【list】获取商家列表失败,page:{},size:{},sellerDTO：{}", page, size, sellerDTO);
+            e.printStackTrace();
+            throw new BaseException(ResultCode.ERROR.getStatus(), "获取商家列表失败");
         }
     }
 }
