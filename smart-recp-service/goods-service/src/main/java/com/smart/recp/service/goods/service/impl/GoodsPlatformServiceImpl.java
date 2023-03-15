@@ -3,6 +3,7 @@ package com.smart.recp.service.goods.service.impl;
 import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.enums.ResultCode;
 import com.smart.recp.common.core.result.PageResult;
+import com.smart.recp.service.goods.dto.GoodsCategoryDTO;
 import com.smart.recp.service.goods.dto.GoodsDTO;
 import com.smart.recp.service.goods.service.GoodsPlatformService;
 import com.smart.recp.service.goods.service.GoodsService;
@@ -127,5 +128,26 @@ public class GoodsPlatformServiceImpl implements GoodsPlatformService {
             e.printStackTrace();
             throw new BaseException(ResultCode.ERROR.getStatus(), "审核通过商品失败" + e.getMessage());
         }
+    }
+
+    @Override
+    public Boolean modifyCategory(GoodsCategoryDTO goodsCategoryDTO) throws BaseException {
+        return goodsService.modifyCategory(goodsCategoryDTO);
+    }
+
+
+    @Override
+    public Integer removeCategory(List<Integer> categoryIdList) throws BaseException {
+        return goodsService.removeCategory(categoryIdList);
+    }
+
+    @Override
+    public Boolean addCategory(GoodsCategoryDTO goodsCategoryDTO) throws BaseException {
+        return goodsService.addCategory(goodsCategoryDTO);
+    }
+
+    @Override
+    public GoodsCategoryVO getCategoryById(Integer categoryId) throws BaseException {
+        return goodsService.getCategoryById(categoryId);
     }
 }

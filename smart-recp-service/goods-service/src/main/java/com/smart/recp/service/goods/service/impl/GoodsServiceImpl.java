@@ -6,10 +6,7 @@ import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.enums.ResultCode;
 import com.smart.recp.common.core.result.PageResult;
 import com.smart.recp.common.core.util.BeanCopyUtils;
-import com.smart.recp.service.goods.dto.GoodsDTO;
-import com.smart.recp.service.goods.dto.GoodsResourceDTO;
-import com.smart.recp.service.goods.dto.GoodsSpecDTO;
-import com.smart.recp.service.goods.dto.GoodsSpecPriceDTO;
+import com.smart.recp.service.goods.dto.*;
 import com.smart.recp.service.goods.entity.*;
 import com.smart.recp.service.goods.mapper.*;
 import com.smart.recp.service.goods.service.GoodsService;
@@ -477,6 +474,81 @@ public class GoodsServiceImpl implements GoodsService {
             log.error("失败：【updateById】根据ID修改商品信息失败，{}", goodsDTO);
             e.printStackTrace();
             throw new BaseException(ResultCode.ERROR.getStatus(), "失败：根据ID修改商品信息失败");
+        }
+    }
+
+
+    @Override
+    public Boolean addCategory(GoodsCategoryDTO goodsCategoryDTO) throws BaseException {
+        try {
+            GoodsCategory goodsCategory = new GoodsCategory();
+            BeanUtils.copyProperties(goodsCategoryDTO, goodsCategory);
+            int insert = goodsCategoryMapper.insert(goodsCategory);
+            if (insert < 1) {
+                log.error("失败：【addCategory】添加商品分类信息失败，{}", goodsCategoryDTO);
+                throw new BaseException(ResultCode.ERROR.getStatus(), "失败：添加商品分类信息失败");
+            }
+            log.info("成功：【addCategory】添加商品分类信息成功，{}", goodsCategoryDTO);
+            return true;
+        } catch (Exception e) {
+            log.error("失败：【addCategory】添加商品分类信息失败，{}", goodsCategoryDTO);
+            e.printStackTrace();
+            throw new BaseException(ResultCode.ERROR.getStatus(), "失败：添加商品分类信息失败");
+        }
+    }
+
+    @Override
+    public Boolean modifyCategory(GoodsCategoryDTO goodsCategoryDTO) throws BaseException {
+        try {
+            GoodsCategory goodsCategory = new GoodsCategory();
+            BeanUtils.copyProperties(goodsCategoryDTO, goodsCategory);
+            int update = goodsCategoryMapper.updateById(goodsCategory);
+            if (update < 1) {
+                log.error("失败：【modifyCategory】根据ID修改商品分类信息失败，{}", goodsCategoryDTO);
+                throw new BaseException(ResultCode.ERROR.getStatus(), "失败：根据ID修改商品分类信息失败");
+            }
+            log.info("成功：【modifyCategory】根据ID修改商品分类信息成功，{}", goodsCategoryDTO);
+            return true;
+        } catch (Exception e) {
+            log.error("失败：【modifyCategory】根据ID修改商品分类信息失败，{}", goodsCategoryDTO);
+            e.printStackTrace();
+            throw new BaseException(ResultCode.ERROR.getStatus(), "失败：根据ID修改商品分类信息失败");
+        }
+    }
+
+    @Override
+    public Integer removeCategory(List<Integer> categoryIdList) throws BaseException {
+        try {
+            int delete = goodsCategoryMapper.deleteBatchIds(categoryIdList);
+            if (delete < 1) {
+                log.error("失败：【removeCategory】删除商品失败 => categoryIdList:{}", categoryIdList);
+                throw new BaseException(ResultCode.ERROR);
+            }
+            log.info("成功：【removeCategory】删除商品成功 => categoryIdList:{},{}", categoryIdList, delete);
+            return delete;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("失败：【removeCategory】删除商品信息失败 => categoryIdList:{}", categoryIdList);
+            throw new BaseException(ResultCode.ERROR.getStatus(), "删除商品分类信息失败");
+        }
+    }
+
+    @Override
+    public GoodsCategoryVO getCategoryById(Integer categoryId) throws BaseException {
+        try {
+            GoodsCategory goodsCategory = goodsCategoryMapper.selectById(categoryId);
+            if (ObjectUtils.isEmpty(goodsCategory)) {
+                log.error("失败：【getCategoryById】根据ID获取商品分类信息失败 => categoryId:{}", categoryId);
+                throw new BaseException(ResultCode.ERROR);
+            }
+            GoodsCategoryVO goodsCategoryVO = new GoodsCategoryVO();
+            BeanUtils.copyProperties(goodsCategory, goodsCategoryVO);
+            log.info("成功：【getCategoryById】根据ID获取商品分类信息成功 => categoryId:{}", categoryId);
+            return goodsCategoryVO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("失败：【getCategoryById】根据ID获取商品分类信息失败 => categoryId:{}", categoryId);
+            throw new BaseException(ResultCode.ERROR.getStatus(), "根据ID获取商品分类信息失败");
         }
     }
 }

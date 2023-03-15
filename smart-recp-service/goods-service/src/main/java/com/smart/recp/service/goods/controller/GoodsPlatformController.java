@@ -3,6 +3,7 @@ package com.smart.recp.service.goods.controller;
 import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.result.PageResult;
 import com.smart.recp.common.core.result.RestResult;
+import com.smart.recp.service.goods.dto.GoodsCategoryDTO;
 import com.smart.recp.service.goods.dto.GoodsDTO;
 import com.smart.recp.service.goods.service.GoodsBuyerService;
 import com.smart.recp.service.goods.service.GoodsPlatformService;
@@ -67,7 +68,6 @@ public class GoodsPlatformController {
     }
 
 
-
     @PutMapping("/approved")
     @ApiOperation(value = "审核通过商品")
     @ApiImplicitParams({
@@ -77,5 +77,31 @@ public class GoodsPlatformController {
         return RestResult.success(goodsPlatformService.approvedByGoodsId(goodsId));
     }
 
+    @PostMapping("/add-category")
+    @ApiOperation(value = "添加商品分类信息")
+    public RestResult<Boolean> addCategory(@RequestBody GoodsCategoryDTO goodsCategoryDTO) throws BaseException {
+        return RestResult.success(goodsPlatformService.addCategory(goodsCategoryDTO));
+    }
+
+
+    @PutMapping("/modify-category")
+    @ApiOperation(value = "修改商品分类信息")
+    public RestResult<Boolean> modifyCategory(@RequestBody GoodsCategoryDTO goodsCategoryDTO) throws BaseException {
+        return RestResult.success(goodsPlatformService.modifyCategory(goodsCategoryDTO));
+    }
+
+
+    @DeleteMapping("/remove-category")
+    @ApiOperation(value = "修改商品分类信息")
+    public RestResult<Integer> removeCategory(@RequestParam List<Integer> categoryIdList) throws BaseException {
+        return RestResult.success(goodsPlatformService.removeCategory(categoryIdList));
+    }
+
+    @GetMapping("/get-category")
+    @ApiOperation(value = "根据Id获取商品分类信息")
+    @ApiImplicitParam(name = "categoryId", value = "分类ID")
+    public RestResult<GoodsCategoryVO> getCategory(@RequestParam Integer categoryId) throws BaseException {
+        return RestResult.success(goodsPlatformService.getCategoryById(categoryId));
+    }
 
 }

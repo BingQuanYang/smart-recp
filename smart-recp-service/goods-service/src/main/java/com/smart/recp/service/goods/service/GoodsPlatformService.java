@@ -2,6 +2,7 @@ package com.smart.recp.service.goods.service;
 
 import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.result.PageResult;
+import com.smart.recp.service.goods.dto.GoodsCategoryDTO;
 import com.smart.recp.service.goods.dto.GoodsDTO;
 import com.smart.recp.service.goods.vo.GoodsCategoryVO;
 import com.smart.recp.service.goods.vo.GoodsVO;
@@ -41,4 +42,12 @@ public interface GoodsPlatformService {
     Boolean lowerByGoodsId(Integer goodsId) throws BaseException;
 
     Boolean approvedByGoodsId(Integer goodsId) throws BaseException;
+
+    Boolean modifyCategory(GoodsCategoryDTO goodsCategoryDTO) throws BaseException;
+
+    Integer removeCategory(List<Integer> categoryIdList) throws BaseException;
+
+    Boolean addCategory(GoodsCategoryDTO goodsCategoryDTO) throws BaseException;
+
+    GoodsCategoryVO getCategoryById(Integer categoryId) throws BaseException;
 }
