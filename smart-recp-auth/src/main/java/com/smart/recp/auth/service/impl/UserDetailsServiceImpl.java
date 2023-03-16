@@ -3,6 +3,7 @@ package com.smart.recp.auth.service.impl;
 import com.smart.recp.auth.entity.AuthUserDetail;
 import com.smart.recp.common.core.enums.ResultCode;
 import com.smart.recp.common.core.result.RestResult;
+import com.smart.recp.service.user.dto.UserDTO;
 import com.smart.recp.service.user.feign.service.IUserClient;
 import com.smart.recp.service.user.vo.UserVO;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 
 /**
  * @author ybq
@@ -54,6 +56,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             log.error("失败：登录失败-该账号已过期!-账号：{}", account);
             throw new AccountExpiredException("该账号已过期!");
         }
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(userVO.getUserId());
+        userDTO.setLastLoginTime(LocalDateTime.now());
+        userClient.update(userDTO);
         return userDetail;
     }
 

@@ -50,10 +50,12 @@ spring:
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/oauth/**,/getPublicKey
+            - Path=/api/oauth/**,/getPublicKey
           filters:
-            - StripPrefix=0
+            - StripPrefix=1
         #            - AddResponseHeader=X-Response-Default-Foo, Default-Bar
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials Vary, RETAIN_UNIQUE
   #TODO
   #BUG
   main:
