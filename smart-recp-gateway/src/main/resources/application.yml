@@ -55,7 +55,7 @@ spring:
             - StripPrefix=1
         #            - AddResponseHeader=X-Response-Default-Foo, Default-Bar
       default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials Vary, RETAIN_UNIQUE
+#        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials Vary, RETAIN_UNIQUE
   #TODO
   #BUG
   main:

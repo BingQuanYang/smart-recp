@@ -70,4 +70,11 @@ public class UserDTO {
      */
     @ApiModelProperty(value="最后一次登录时间")
     private LocalDateTime lastLoginTime;
+
+
+    /**
+     * 原密码
+     */
+    @ApiModelProperty(value="最后一次登录时间")
+    private String oldPassword;
 }

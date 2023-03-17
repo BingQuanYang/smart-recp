@@ -38,14 +38,17 @@ public class SellerServiceImpl implements SellerService {
             Seller seller = sellerMapper.selectById(sellerId);
             if (ObjectUtils.isEmpty(seller)) {
                 log.error("失败：根据ID查询卖家失败，卖家不存在，ID：{}", sellerId);
-                throw new BaseException(ResultCode.ERROR);
+//                throw new BaseException(ResultCode.ERROR);
             } else if (seller.getIsDelete().equals(1)) {
                 log.error("失败：根据ID查询卖家失败，该卖家已删除，ID：{}", sellerId);
                 throw new BaseException(ResultCode.ERROR);
             }
+
             SellerVO sellerVO = new SellerVO();
-            BeanUtils.copyProperties(seller, sellerVO);
-            log.error("成功：根据ID查询卖家成功，卖家：{}", seller);
+            if (ObjectUtils.isNotEmpty(seller)) {
+                BeanUtils.copyProperties(seller, sellerVO);
+            }
+            log.info("成功：根据ID查询卖家成功，卖家：{}", seller);
             return sellerVO;
         } catch (Exception e) {
             log.error("失败：根据ID查询卖家失败,ID：{}", sellerId);

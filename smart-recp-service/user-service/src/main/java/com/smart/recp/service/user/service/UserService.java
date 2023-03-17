@@ -17,4 +17,6 @@ public interface UserService {
     boolean update(UserDTO userDTO) throws BaseException;
 
     PageResult<UserVO> list(Integer page, Integer size, UserDTO userDTO) throws BaseException;
+
+    boolean updatePassword(UserDTO userDTO) throws BaseException;
 }

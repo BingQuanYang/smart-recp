@@ -55,4 +55,10 @@ public class UserController {
         return RestResult.success(userService.update(userDTO));
     }
 
+    @PutMapping("/modify-password")
+    @ApiOperation("修改用户信息")
+    public RestResult<Boolean> updatePassword(@RequestBody UserDTO userDTO) throws BaseException {
+        return RestResult.success(userService.updatePassword(userDTO));
+    }
+
 }

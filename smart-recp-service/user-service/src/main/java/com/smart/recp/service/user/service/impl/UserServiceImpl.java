@@ -168,4 +168,28 @@ public class UserServiceImpl implements UserService {
             throw new BaseException(ResultCode.ERROR.getStatus(), "获取用户列表失败");
         }
     }
+
+    @Override
+    public boolean updatePassword(UserDTO userDTO) throws BaseException {
+        try {
+            User user = userMapper.selectById(userDTO.getUserId());
+            if (ObjectUtils.isEmpty(user)) {
+                throw new BaseException(ResultCode.ERROR.getStatus(), "修改密码失败");
+            }
+            if (!user.getPassword().equals(userDTO.getOldPassword())) {
+                throw new BaseException(ResultCode.ERROR.getStatus(), "原密码不正确");
+            }
+            BeanUtils.copyProperties(userDTO, user);
+            int update = userMapper.updateById(user);
+            if (update < 1) {
+                log.error("失败：修改密码失败,修改数据库失败,userDTO：{}", userDTO);
+                throw new BaseException(ResultCode.ERROR);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("失败：修改密码失败,userDTO：{}", userDTO);
+            throw new BaseException(ResultCode.ERROR.getStatus(), e.getMessage());
+        }
+    }
 }

@@ -60,6 +60,10 @@
             <groupId>com.smart.recp</groupId>
             <artifactId>user-service-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.smart.recp</groupId>
+            <artifactId>common-web</artifactId>
+        </dependency>
     </dependencies>
 
 
