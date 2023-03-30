@@ -5,7 +5,9 @@ import com.smart.recp.auth.service.AuthService;
 import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.enums.ResultCode;
 import com.smart.recp.common.core.result.RestResult;
+import com.smart.recp.service.user.dto.BuyerDTO;
 import com.smart.recp.service.user.dto.UserDTO;
+import com.smart.recp.service.user.feign.service.IBuyerClient;
 import com.smart.recp.service.user.feign.service.IUserClient;
 import com.smart.recp.service.user.vo.UserVO;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,8 @@ import java.util.Map;
 public class AuthServiceImpl implements AuthService {
     @Resource
     IUserClient userClient;
+    @Resource
+    IBuyerClient buyerClient;
 
 
     private TokenEndpoint tokenEndpoint;
@@ -110,8 +114,11 @@ public class AuthServiceImpl implements AuthService {
             userDTO.setType(platform);
             RestResult<Boolean> add = userClient.add(userDTO);
             if (!RestResult.isSuccess(add)) {
+                log.error("失败：添加用户失败");
                 throw new BaseException(ResultCode.ERROR, "注册失败");
             }
+            userVORestResult = userClient.getByMobile(mobile);
+            addBuyer(platform, userVORestResult);
             parameters.put("username", account);
             parameters.put("password", password);
         }
@@ -134,6 +141,22 @@ public class AuthServiceImpl implements AuthService {
         RestResult<Boolean> add = userClient.add(userDTO);
         if (!RestResult.isSuccess(add)) {
             throw new BaseException(ResultCode.ERROR, "注册失败");
+        }
+        userVORestResult = userClient.getByAccount(username);
+        addBuyer(platform, userVORestResult);
+    }
+
+    private void addBuyer(Integer platform, RestResult<UserVO> userVORestResult) throws BaseException {
+        UserVO userVO = userVORestResult.getData();
+        if (Integer.valueOf(1).equals(platform)) {
+            BuyerDTO buyerDTO = new BuyerDTO();
+            buyerDTO.setBuyerId(userVO.getUserId());
+            buyerDTO.setBuyerAccount(userVO.getAccount());
+            RestResult<Boolean> result = buyerClient.add(buyerDTO);
+            if (!RestResult.isSuccess(result)) {
+                log.error("失败：添加买家失败");
+                throw new BaseException(ResultCode.ERROR, "注册失败");
+            }
         }
     }
 

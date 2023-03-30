@@ -23,7 +23,7 @@ public class AuthExceptionHandler {
      */
     @ExceptionHandler(InvalidGrantException.class)
     public RestResult handleInvalidGrantException(InvalidGrantException e) {
-        return RestResult.error(ResultCode.ACCOUNT_LOGIN_ERROR);
+        return RestResult.result(ResultCode.ACCOUNT_LOGIN_ERROR);
     }
 
 
