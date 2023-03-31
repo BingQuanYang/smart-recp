@@ -1,6 +1,7 @@
 package com.smart.recp.service.goods.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.smart.recp.service.user.vo.SellerVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,9 @@ public class GoodsVO {
 
     @ApiModelProperty(value = "卖家ID")
     private Integer sellerId;
+
+    @ApiModelProperty(value = "卖家")
+    private SellerVO sellerVO;
 
     @ApiModelProperty(value = "商品名称")
     private String goodsName;

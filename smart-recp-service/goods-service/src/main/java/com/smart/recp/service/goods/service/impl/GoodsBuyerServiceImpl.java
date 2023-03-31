@@ -3,10 +3,13 @@ package com.smart.recp.service.goods.service.impl;
 import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.enums.ResultCode;
 import com.smart.recp.common.core.result.PageResult;
+import com.smart.recp.common.core.result.RestResult;
 import com.smart.recp.service.goods.dto.GoodsDTO;
 import com.smart.recp.service.goods.service.GoodsBuyerService;
 import com.smart.recp.service.goods.service.GoodsService;
 import com.smart.recp.service.goods.vo.*;
+import com.smart.recp.service.user.feign.service.ISellerClient;
+import com.smart.recp.service.user.vo.SellerVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,9 @@ public class GoodsBuyerServiceImpl implements GoodsBuyerService {
 
     @Resource
     GoodsService goodsService;
+
+    @Resource
+    ISellerClient sellerClient;
 
     /**
      * 获取商品列表
@@ -78,6 +84,8 @@ public class GoodsBuyerServiceImpl implements GoodsBuyerService {
                 log.error("买家端：商品未上架 => goodsId：{},goodsVO:{}", goodsId, goodsVO);
                 throw new Exception();
             }
+            RestResult<SellerVO> sellerClientById = sellerClient.getById(goodsVO.getSellerId());
+            goodsVO.setSellerVO(sellerClientById.getData());
             return goodsVO;
         } catch (Exception e) {
             e.printStackTrace();
