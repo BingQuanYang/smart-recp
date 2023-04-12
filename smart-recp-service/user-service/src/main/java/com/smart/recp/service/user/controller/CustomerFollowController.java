@@ -70,4 +70,25 @@ public class CustomerFollowController {
     public RestResult<PageResult<CustomerFollowVO>> customer(@RequestParam Integer page, @RequestParam Integer size, @RequestParam Integer sellerId) throws BaseException {
         return RestResult.success(customerFollowService.listBySellerId(page, size, sellerId));
     }
+
+    @GetMapping("/buyer/follow")
+    @ApiOperation("根据买家ID查关注列表信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "当前页"),
+            @ApiImplicitParam(name = "size", value = "一页展示多少条"),
+            @ApiImplicitParam(name = "buyerId", value = "买家ID")
+    })
+    public RestResult<PageResult<CustomerFollowVO>> follow(@RequestParam Integer page, @RequestParam Integer size, @RequestParam Integer buyerId) throws BaseException {
+        return RestResult.success(customerFollowService.listByBuyerId(page, size, buyerId));
+    }
+
+    @GetMapping("/buyer/get")
+    @ApiOperation("根据买家和卖家ID获取关注信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "buyerId", value = "买家ID"),
+            @ApiImplicitParam(name = "sellerId", value = "卖家ID")
+    })
+    public RestResult<CustomerFollowVO> followOne(@RequestParam Integer buyerId, @RequestParam Integer sellerId) throws BaseException {
+        return RestResult.success(customerFollowService.getByBuyerIdAndSellerId(buyerId, sellerId));
+    }
 }

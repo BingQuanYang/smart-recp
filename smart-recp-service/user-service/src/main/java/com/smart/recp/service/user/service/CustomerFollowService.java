@@ -19,4 +19,8 @@ public interface CustomerFollowService {
     PageResult<CustomerFollowVO> list(Integer page, Integer size) throws BaseException;
 
     PageResult<CustomerFollowVO> listBySellerId(Integer page, Integer size, Integer sellerId) throws BaseException;
+
+    PageResult<CustomerFollowVO> listByBuyerId(Integer page, Integer size, Integer buyerId) throws BaseException;
+
+    CustomerFollowVO getByBuyerIdAndSellerId(Integer buyerId, Integer sellerId) throws BaseException;
 }

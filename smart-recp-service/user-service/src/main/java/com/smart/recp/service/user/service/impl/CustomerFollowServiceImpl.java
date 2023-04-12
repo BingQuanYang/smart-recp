@@ -64,6 +64,10 @@ public class CustomerFollowServiceImpl implements CustomerFollowService {
     @Override
     public boolean add(CustomerFollowDTO customerFollowDTO) throws BaseException {
         try {
+            CustomerFollowVO customerFollowVO = getByBuyerIdAndSellerId(customerFollowDTO.getBuyerId(), customerFollowDTO.getSellerId());
+            if (ObjectUtils.isNotEmpty(customerFollowVO)) {
+                return true;
+            }
             CustomerFollow customerFollow = new CustomerFollow();
             BeanUtils.copyProperties(customerFollowDTO, customerFollow);
             int insert = customerFollowMapper.insert(customerFollow);
@@ -166,8 +170,38 @@ public class CustomerFollowServiceImpl implements CustomerFollowService {
             return selectListByPage(followPage, queryWrapper);
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("失败：【listByBuyerId】 根据卖家ID查询客户关注失败");
+            throw new BaseException(ResultCode.ERROR.getStatus(), "根据卖家ID查询客户关注失败");
+        }
+    }
+
+    @Override
+    public PageResult<CustomerFollowVO> listByBuyerId(Integer page, Integer size, Integer buyerId) throws BaseException {
+        try {
+            Page<CustomerFollow> followPage = new Page<>(page, size);
+            LambdaQueryWrapper<CustomerFollow> queryWrapper = new QueryWrapper<CustomerFollow>().lambda().eq(CustomerFollow::getIsDelete, 0).eq(CustomerFollow::getBuyerId, buyerId);
+            return selectListByPage(followPage, queryWrapper);
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error("失败：【listByBuyerId】 根据买家ID查询客户关注失败");
             throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家ID查询客户关注失败");
+        }
+    }
+
+    @Override
+    public CustomerFollowVO getByBuyerIdAndSellerId(Integer buyerId, Integer sellerId) throws BaseException {
+        try {
+            CustomerFollow customerFollow = customerFollowMapper.selectOne(new QueryWrapper<CustomerFollow>().lambda().eq(CustomerFollow::getIsDelete, 0).eq(CustomerFollow::getBuyerId, buyerId).eq(CustomerFollow::getSellerId, sellerId));
+            if (ObjectUtils.isEmpty(customerFollow)) {
+                return null;
+            }
+            CustomerFollowVO customerFollowVO = new CustomerFollowVO();
+            BeanUtils.copyProperties(customerFollow, customerFollowVO);
+            return customerFollowVO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("失败：【getByBuyerIdAndSellerId】 根据买家和买家ID查询关注信息");
+            throw new BaseException(ResultCode.ERROR.getStatus(), "根据买家和买家ID查询关注信息");
         }
     }
 }
