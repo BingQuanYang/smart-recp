@@ -5,6 +5,7 @@ import com.smart.recp.auth.service.AuthService;
 import com.smart.recp.common.core.base.BaseException;
 import com.smart.recp.common.core.enums.ResultCode;
 import com.smart.recp.common.core.result.RestResult;
+import com.smart.recp.common.redis.service.RedisService;
 import com.smart.recp.service.user.dto.BuyerDTO;
 import com.smart.recp.service.user.dto.UserDTO;
 import com.smart.recp.service.user.feign.service.IBuyerClient;
@@ -38,6 +39,9 @@ public class AuthServiceImpl implements AuthService {
     IUserClient userClient;
     @Resource
     IBuyerClient buyerClient;
+
+    @Resource
+    RedisService redisService;
 
 
     private TokenEndpoint tokenEndpoint;
@@ -93,8 +97,7 @@ public class AuthServiceImpl implements AuthService {
             log.error("失败：未输入手机号");
             throw new BaseException(ResultCode.AUTH_ERROR, "请输入手机号");
         }
-        //TODO
-        String getCaptcha = "123456";
+        String getCaptcha = String.valueOf(redisService.get(mobile));
         if (!captcha.equals(getCaptcha)) {
             throw new BaseException(ResultCode.ERROR, "验证码不正确");
         } else {
@@ -167,8 +170,7 @@ public class AuthServiceImpl implements AuthService {
             log.error("失败：未输入手机号");
             throw new BaseException(ResultCode.AUTH_ERROR, "请输入手机号");
         }
-        //TODO
-        String getCaptcha = "123456";
+        String getCaptcha = String.valueOf(redisService.get(mobile));
         if (!captcha.equals(getCaptcha)) {
             throw new BaseException(ResultCode.ERROR, "验证码不正确");
         } else {
