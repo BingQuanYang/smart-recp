@@ -32,13 +32,27 @@
             <groupId>com.smart.recp</groupId>
             <artifactId>common-web</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.smart.recp</groupId>-->
-<!--            <artifactId>common-redis</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.smart.recp</groupId>-->
+        <!--            <artifactId>common-redis</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+            <exclusion>
+                <artifactId>seata-spring-boot-starter</artifactId>
+                <groupId>io.seata</groupId>
+            </exclusion>
+        </dependency>
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-spring-boot-starter</artifactId>
+            <!--seata starter 采用1.4.2版本-->
+            <version>1.4.2</version>
         </dependency>
 
     </dependencies>

@@ -14,3 +14,32 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${registry-center.host}:${registry-center.port}
+
+seata:
+  tx-service-group: smart_recp_seata_group
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: ${registry-center.host}:${registry-center.port}
+      group: "SEATA_GROUP"
+      namespace: ""
+      username: ${registry-center.username}
+      password: ${registry-center.password}
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${registry-center.host}:${registry-center.port}
+      group: "SEATA_GROUP"
+      namespace: ""
+      username: ${registry-center.username}
+      password: ${registry-center.password}
+  enable-auto-data-source-proxy: false
+
+logging:
+  level:
+    com.smart.recp.service.goods.mapper: debug

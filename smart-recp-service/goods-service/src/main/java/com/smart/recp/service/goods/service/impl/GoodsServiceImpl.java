@@ -11,6 +11,8 @@ import com.smart.recp.service.goods.entity.*;
 import com.smart.recp.service.goods.mapper.*;
 import com.smart.recp.service.goods.service.GoodsService;
 import com.smart.recp.service.goods.vo.*;
+import io.seata.core.context.RootContext;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -211,10 +213,11 @@ public class GoodsServiceImpl implements GoodsService {
      * @return
      */
     @Override
-    @Transactional
+    @GlobalTransactional
     public Boolean update(GoodsDTO goodsDTO) throws BaseException {
         try {
 
+            log.info("seata分布式事务：xid = " + RootContext.getXID());
             //TODO  删除商品缓存
 
             /**
