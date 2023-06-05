@@ -8,9 +8,13 @@ import com.smart.recp.service.goods.service.StockService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.redisson.Redisson;
+import org.redisson.RedissonRedLock;
+import org.redisson.api.RLock;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ybq
@@ -21,6 +25,8 @@ import javax.annotation.Resource;
 public class StockController {
     @Resource
     StockService stockService;
+    @Resource
+    Redisson redisson;
 
     @PutMapping("/subtract")
     @ApiOperation("减库存")
@@ -36,6 +42,26 @@ public class StockController {
     @ApiOperation("修改库存")
     public RestResult<Boolean> modify(@RequestBody GoodsSpecDTO goodsSpecDTO) throws BaseException {
         return RestResult.success(stockService.update(goodsSpecDTO));
+    }
+
+
+    @PutMapping("/subtract/test")
+    public RestResult<Boolean> testSubtract(@RequestParam Integer specId, @RequestParam Integer stock) throws BaseException {
+        RLock lock = redisson.getLock("" + specId);
+        RedissonRedLock redLock = new RedissonRedLock(lock);
+        try {
+            boolean b = redLock.tryLock(30, TimeUnit.SECONDS);
+            if (b) {
+//                redLock.lock();
+                RestResult<Boolean> subtract = subtract(specId, stock);
+                return subtract;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            redLock.unlock();
+        }
+        return RestResult.error();
     }
 
 }

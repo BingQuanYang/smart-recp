@@ -33,6 +33,7 @@ public class StockServiceImpl implements StockService {
                 log.error("失败：【subtract】扣库存失败,库存不足");
                 throw new BaseException(ResultCode.ERROR.getStatus(), "扣库存失败,库存不足");
             }
+            //TODO 用sql 进行减运算
             goodsSpec.setStock(goodsSpec.getStock() - stock);
             int update = goodsSpecMapper.updateById(goodsSpec);
             if (update < 1) {
