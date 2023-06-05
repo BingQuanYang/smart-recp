@@ -26,6 +26,9 @@ import com.smart.recp.service.user.feign.service.IReceiveAddressClient;
 import com.smart.recp.service.user.vo.ReceiveAddressVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.redisson.Redisson;
+import org.redisson.RedissonRedLock;
+import org.redisson.api.RLock;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +38,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +65,9 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
     @Resource
     IReceiveAddressClient receiveAddressClient;
 
+    @Resource
+    Redisson redisson;
+
     @Override
     public OrderItemVO getById(Integer orderItemId) throws BaseException {
         return orderItemService.getById(orderItemId);
@@ -73,7 +80,6 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
 
 
     //TODO 分布式事务
-    @Transactional
     @Override
     public Integer generateOrder(GenerateOrderDTO generateOrderDTO) throws BaseException {
         try {
@@ -82,7 +88,7 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
                 throw new BaseException(ResultCode.ERROR.getStatus(), "请选择收货地址");
             }
             List<OrderCartDTO> orderCartDTOList = generateOrderDTO.getOrderCartDTOList();
-            //查询购物车信息
+            //查询购物车信息及收货地址信息
             List<OrderCartVO> orderCartVOList = new ArrayList<>();
             for (OrderCartDTO orderCartDTO : orderCartDTOList) {
                 Integer cartId = orderCartDTO.getCartId();
@@ -143,19 +149,36 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
                 orderItem.setReceiveName(addressVO.getReceiveName());
                 orderItem.setReceiveMobile(addressVO.getCustomerMobile());
                 orderItem.setReceiveAddress(String.format("%s%s%s%s", addressVO.getProvince(), addressVO.getCity(), addressVO.getCounty(), addressVO.getDetailAddress()));
-                //TODO 减库存加锁
-                RestResult<Boolean> result = stockClient.subtract(orderCartVO.getSpecId(), orderCartVO.getGoodsAmount());
-                if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getData()) || !result.getData()) {
-                    log.error("失败：【generateOrder】生成订单失败,扣除库存失败");
-                    throw new BaseException(ResultCode.ERROR.getStatus(), result.getMessage());
+                //加锁
+                String lockKey = String.format("goods::subtract::%s-%s", orderCartVO.getGoodsId(), orderCartVO.getSpecId());
+                RLock lock = redisson.getLock(lockKey);
+                RedissonRedLock redLock = new RedissonRedLock(lock);
+                boolean flagLock = false;
+                try {
+                    flagLock = redLock.tryLock(30, TimeUnit.SECONDS);
+                    if (flagLock) {
+                        RestResult<Boolean> result = stockClient.subtract(orderCartVO.getSpecId(), orderCartVO.getGoodsAmount());
+                        //模拟BUG
+                        //int i = 1/0;
+                        if (ObjectUtils.isEmpty(result) || ObjectUtils.isEmpty(result.getData()) || !result.getData()) {
+                            log.error("失败：【generateOrder】生成订单失败,扣除库存失败");
+                            throw new BaseException(ResultCode.ERROR.getStatus(), result.getMessage());
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    redLock.unlock();
                 }
                 orderItemList.add(orderItem);
             }
+            //生成子订单订单
             int insert = orderItemService.addList(orderItemList);
             if (insert != orderItemList.size()) {
                 log.error("失败：【generateOrder】生成订单失败，添加订单子项目失败");
                 throw new BaseException(ResultCode.ERROR.getStatus(), "生成订单失败");
             }
+            //删除购物车
             List<Integer> deleteCartIdList = orderCartVOList.stream().filter(item -> ObjectUtils.isNotEmpty(item.getCartId())).map(item -> item.getCartId()).collect(Collectors.toList());
             if (ObjectUtils.isNotEmpty(deleteCartIdList) && deleteCartIdList.size() >= 1) {
                 Integer delete = cartService.deleteByIdList(deleteCartIdList);
@@ -168,6 +191,7 @@ public class OrderBuyerServiceImpl implements OrderBuyerService {
             log.info("成功：【generateOrder】生成订单成功");
             return orderId;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("失败：【generateOrder】生成订单失败");
             throw new BaseException(ResultCode.ERROR.getStatus(), "生成订单失败");
         }
